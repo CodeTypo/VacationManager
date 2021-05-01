@@ -12,6 +12,14 @@ public class DbUtilAdmin extends DbUtil {
     private String name;
     private String password;
 
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
     public DbUtilAdmin(String URL) {
         this.URL = URL;
     }
@@ -36,7 +44,7 @@ public class DbUtilAdmin extends DbUtil {
                 int id = resultSet.getInt("id");
                 String login = resultSet.getString("employee_login");
                 String password = resultSet.getString("employee_password");
-                boolean isEmployee = resultSet.getBoolean("employee_role");
+                boolean isEmployee = resultSet.getBoolean("is_admin");
 
                 employees.add(new Employee(id, login, password, isEmployee));
 
