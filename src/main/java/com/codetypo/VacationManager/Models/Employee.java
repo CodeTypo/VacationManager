@@ -41,7 +41,7 @@ public class Employee {
         this.password = password;
     }
 
-    public boolean isAdmin() {
+    public boolean getisAdmin() {
         return isAdmin;
     }
 
