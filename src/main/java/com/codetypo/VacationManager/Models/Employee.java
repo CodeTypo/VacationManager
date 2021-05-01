@@ -10,7 +10,7 @@ public class Employee {
 
     private boolean isAdmin;
 
-    public Employee(String login, String password, boolean isAdmin) {
+    public Employee(int id, String login, String password, boolean isAdmin) {
         this.id = id;
         this.login = login;
         this.password = password;
