@@ -10,8 +10,6 @@ import java.util.List;
 
 public abstract class DbUtil {
 
-    abstract List<Employee> getEmployees() throws Exception;
-    abstract List<Vacation> getVacations() throws Exception;
 
     protected static void close(Connection conn, Statement statement, ResultSet resultSet) {
 

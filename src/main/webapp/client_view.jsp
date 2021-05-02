@@ -15,7 +15,7 @@
             <div class="container">
                 <div class="navbar-header">
                     <div class="style padding: 25 px">
-                        <a class="navbar-brand" href="index.jsp">Vacation Manager</a>
+                        <a class="navbar-brand" href="index.jsp">Log out</a>
                     </div>
                 </div>
             </div>
@@ -27,7 +27,12 @@
         <div class="row form-group"></div>
 
 
-        <h1>Employees</h1>
+        <c:forEach var="detail" items="${USER_DETAILS}">
+                <h1>${detail.firstName}  ${detail.lastName}</h1>
+        </c:forEach>
+
+        <h2>Vacations requested by You: </h2>
+
 
         <div class="row form-group"></div>
         <div class="row form-group"></div>
@@ -37,18 +42,18 @@
             <thead>
                 <tr>
                     <th scope="col">#</th>
-                    <th scope="col">Login</th>
-                    <th scope="col">Password</th>
-                    <th scope="col">isAdmin</th>
+                    <th scope="col">Begin date</th>
+                    <th scope="col">End date</th>
+                    <th scope="col">approved</th>
                 </tr>
             </thead>
             <tbody>
-                <c:forEach var="tmpEmployee" items="${EMPLOYEES_LIST}">
+                <c:forEach var="vacation" items="${USER_VACATIONS}">
                     <tr>
-                        <th scope="row">${tmpEmployee.id}</th>
-                        <td>${tmpEmployee.login}</td>
-                        <td>${tmpEmployee.password}</td>
-                        <td>${tmpEmployee.isAdmin}</td>
+                        <th scope="row">${vacation.id}</th>
+                        <td>${vacation.beginDate}</td>
+                        <td>${vacation.endDate}</td>
+                        <td>${vacation.approved}</td>
                     </tr>
                 </c:forEach>
             </tbody>

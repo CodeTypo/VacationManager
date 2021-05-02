@@ -1,6 +1,7 @@
 package com.codetypo.VacationManager.Servlets;
 
-import com.codetypo.VacationManager.Models.Employee;
+import com.codetypo.VacationManager.Models.Details;
+import com.codetypo.VacationManager.Models.Vacation;
 import com.codetypo.VacationManager.Utilities.DbUtilEmployee;
 
 import javax.naming.Context;
@@ -14,6 +15,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.sql.DataSource;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 @WebServlet("/UserServlet")
@@ -21,6 +23,7 @@ public class UserServlet extends HttpServlet {
 
     private DataSource dataSource;
     private DbUtilEmployee dbUtil;
+
 
     public UserServlet() {
         // Obtain our environment naming context
@@ -52,21 +55,39 @@ public class UserServlet extends HttpServlet {
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
+        String name = request.getParameter("userLogin");
+        String password = request.getParameter("userPassword");
+        RequestDispatcher dispatcher;
+
+        System.out.println("login:" + name);
+        System.out.println("pswd:" + password);
+
         try {
-            listEmployees(request, response);
+
+            int empId = dbUtil.loginToDB(name,password);
+
+            if(empId != -1) {
+
+                List<Details>details = new ArrayList<>();
+                List<Vacation>vacations = new ArrayList<>();
+
+                details.add(dbUtil.getEmployeeDetails(empId));
+                request.setAttribute("USER_DETAILS", details);
+
+                vacations = dbUtil.getVacations(empId);
+                request.setAttribute("USER_VACATIONS", vacations);
+
+
+                dispatcher = request.getRequestDispatcher("/client_view.jsp");
+            } else {
+                dispatcher = request.getRequestDispatcher("/index.jsp");
+            }
+            dispatcher.forward(request, response);
+
         } catch (Exception e) {
             e.printStackTrace();
+
         }
     }
 
-    private void listEmployees(HttpServletRequest request, HttpServletResponse response) throws Exception {
-
-        List<Employee> phoneList = dbUtil.getEmployees();
-
-        request.setAttribute("EMPLOYEES_LIST", phoneList);
-
-        RequestDispatcher dispatcher = request.getRequestDispatcher("/client_view.jsp");
-        dispatcher.forward(request, response);
-
-    }
 }

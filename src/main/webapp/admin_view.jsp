@@ -59,13 +59,6 @@
                         <td>${tmpEmployee.login}</td>
                         <td>${tmpEmployee.password}</td>
                         <td>${tmpEmployee.isAdmin}</td>
-                        <td><a href="${updateLink}">
-                            <button type="button" class="btn btn-success">Zmień dane</button>
-                        </a>
-                        <a href="${deleteLink}"
-                           onclick="if(!(confirm('Czy na pewno chcesz usunąć ten telefon?'))) return false">
-                            <button type="button" class="btn btn-danger">Usuń</button>
-                        </a></td>
                     </tr>
                 </c:forEach>
             </tbody>
@@ -117,23 +110,8 @@
         <div class="row form-group"></div>
         <div class="row form-group"></div>
         <div class="row form-group"></div>
-
-        <div class="col-sm-9">
-            <p><a class="btn btn-primary btn-info" href="" role="button">Dodaj pracownika</a></p>
-        </div>
-
         <div class="row form-group"></div>
         <div class="row form-group"></div>
         <div class="row form-group"></div>
-
-        <div class="row">
-            <div class="container-fluid">
-
-                <div class="col-sm-9">
-                    <a href="index.jsp" class="btn btn-lg btn-primary" role="button" aria-disabled="true">Wróć do strony
-                        głównej</a>
-                </div>
-            </div>
-        </div>
     </body>
 </html>

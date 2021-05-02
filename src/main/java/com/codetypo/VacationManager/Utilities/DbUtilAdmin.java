@@ -25,7 +25,7 @@ public class DbUtilAdmin extends DbUtil {
         this.URL = URL;
     }
 
-    @Override
+
     public List<Employee> getEmployees() throws Exception {
 
         List<Employee> employees = new ArrayList<>();
@@ -57,7 +57,7 @@ public class DbUtilAdmin extends DbUtil {
         return employees;
     }
 
-    @Override
+
     public List<Vacation> getVacations() throws Exception {
         List<Vacation> vacations = new ArrayList<>();
 
