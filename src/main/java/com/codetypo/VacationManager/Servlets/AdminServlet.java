@@ -1,7 +1,7 @@
 package com.codetypo.VacationManager.Servlets;
 
+import com.codetypo.VacationManager.Models.DetailedVacation;
 import com.codetypo.VacationManager.Models.Employee;
-import com.codetypo.VacationManager.Models.Vacation;
 import com.codetypo.VacationManager.Utilities.DbUtilAdmin;
 
 import javax.servlet.RequestDispatcher;
@@ -42,13 +42,17 @@ public class AdminServlet extends HttpServlet {
         System.out.println("login:" + name);
         System.out.println("pswd:" + password);
 
+        request.getSession().setAttribute("login", request.getParameter  ("loginInput"));
+        request.getSession().setAttribute("password", request.getParameter  ("passwordInput"));
+
+
         dbUtil.setName(name);
         dbUtil.setPassword(password);
 
         if (validate(name, password)) {
             RequestDispatcher dispatcher = request.getRequestDispatcher("/admin_view.jsp");
             List<Employee> employeeList= null;
-            List<Vacation> vacationList= null;
+            List<DetailedVacation> vacationList= null;
 
             try {
                 employeeList = dbUtil.getEmployees();
@@ -57,7 +61,7 @@ public class AdminServlet extends HttpServlet {
             }
 
             try {
-                vacationList = dbUtil.getVacations();
+                vacationList = dbUtil.getDetailedVacations();
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -77,10 +81,7 @@ public class AdminServlet extends HttpServlet {
             ServletException, IOException {
 
         try {
-
-            // odczytanie zadania
             String command = request.getParameter("command");
-
             if (command == null)
                 command = "LIST";
 
@@ -90,22 +91,6 @@ public class AdminServlet extends HttpServlet {
                     listEmployees(request, response);
                     break;
 
-//                case "ADD":
-//                    addPhones(request, response);
-//                    break;
-//
-//                case "LOAD":
-//                    loadPhone(request, response);
-//                    break;
-//
-//                case "UPDATE":
-//                    updatePhone(request, response);
-//                    break;
-//
-//                case "DELETE":
-//                    deletePhone(request, response);
-//                    break;
-
                 default:
                     listEmployees(request, response);
             }
@@ -113,81 +98,7 @@ public class AdminServlet extends HttpServlet {
         } catch (Exception e) {
             throw new ServletException(e);
         }
-
     }
-
-//    private void deletePhone(HttpServletRequest request, HttpServletResponse response) throws Exception {
-//
-//        // odczytanie danych z formularza
-//        String id = request.getParameter("phoneID");
-//
-//        // usuniecie telefonu z BD
-//        dbUtil.deletePhone(id);
-//
-//        // wyslanie danych do strony z lista telefonow
-//        listPhones(request, response);
-//
-//    }
-//
-//    private void updatePhone(HttpServletRequest request, HttpServletResponse response) throws Exception {
-//
-//        // odczytanie danych z formularza
-//        int id = Integer.parseInt(request.getParameter("phoneID"));
-//        String model = request.getParameter("nameInput");
-//        String make = request.getParameter("makeInput");
-//        double price = Double.parseDouble(request.getParameter("priceInput"));
-//        double diagonal = Double.parseDouble(request.getParameter("diagonalInput"));
-//        int storage = Integer.parseInt(request.getParameter("storageInput"));
-//        String os = request.getParameter("osInput");
-//
-//        // utworzenie nowego telefonu
-//        Phone phone = new Phone(id, model, make, price, diagonal, storage, os);
-//
-//        // uaktualnienie danych w BD
-//        dbUtil.updatePhone(phone);
-//
-//        // wyslanie danych do strony z lista telefonow
-//        listPhones(request, response);
-//
-//    }
-//
-//    private void loadPhone(HttpServletRequest request, HttpServletResponse response) throws Exception {
-//
-//        // odczytanie id telefonu z formularza
-//        String id = request.getParameter("phoneID");
-//
-//        // pobranie  danych telefonu z BD
-//        Phone phone = dbUtil.getPhone(id);
-//
-//        // przekazanie telefonu do obiektu request
-//        request.setAttribute("PHONE", phone);
-//
-//        // wyslanie danych do formmularza JSP (update_phone_form)
-//        RequestDispatcher dispatcher = request.getRequestDispatcher("/update_phone_form.jsp");
-//        dispatcher.forward(request, response);
-//
-//    }
-//
-//    private void addPhones(HttpServletRequest request, HttpServletResponse response) throws Exception {
-//
-//        // odczytanie danych z formularza
-//        String model = request.getParameter("nameInput");
-//        String make = request.getParameter("makeInput");
-//        double price = Double.parseDouble(request.getParameter("priceInput"));
-//        double diagonal = Double.parseDouble(request.getParameter("diagonalInput"));
-//        int storage = Integer.parseInt(request.getParameter("storageInput"));
-//        String os = request.getParameter("osInput");
-//
-//        // utworzenie obiektu klasy Phone
-//        Phone phone = new Phone(model, make, price, diagonal, storage, os);
-//
-//        // dodanie nowego obiektu do BD
-//        dbUtil.addPhone(phone);
-//
-//        // powrot do listy
-//        listPhones(request, response);
-//
-//    }
 
     private void listEmployees(HttpServletRequest request, HttpServletResponse response) throws Exception {
 
@@ -207,22 +118,18 @@ public class AdminServlet extends HttpServlet {
 
     private boolean validate(String name, String pass) {
         boolean status = false;
-
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
         }
-
         Connection conn = null;
-
         try {
             conn = DriverManager.getConnection(db_url, name, pass);
             status = true;
         } catch (Exception e) {
             e.printStackTrace();
         }
-
         return status;
     }
 }

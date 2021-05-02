@@ -14,19 +14,18 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.sql.DataSource;
+import java.sql.Date;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-@WebServlet("/UserServlet")
-public class UserServlet extends HttpServlet {
+@WebServlet("/VacationServlet")
+public class VacationServlet extends HttpServlet {
 
     private DataSource dataSource;
     private DbUtilEmployee dbUtil;
 
-
-
-
-    public UserServlet() {
+    public VacationServlet() {
         // Obtain our environment naming context
         Context initCtx;
         try {
@@ -56,44 +55,30 @@ public class UserServlet extends HttpServlet {
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) {
         RequestDispatcher dispatcher;
-        String name;
-        String password;
 
-        if(request.getSession().getAttribute("login") == null) {
-            request.getSession().setAttribute("login", request.getParameter("userLogin"));
-            request.getSession().setAttribute("password", request.getParameter("userPassword"));
-        }
+        String startString = request.getParameter("startDate");
+        String endString = request.getParameter("endDate");
 
-        name = (String) request.getSession().getAttribute("login");
-        password = (String) request.getSession().getAttribute("password");
+        String [] elementsStart = startString.split("/");
+        String [] elementsEnd = endString.split("/");
+        String startYear = elementsStart[2];
+        String startMonth = elementsStart[0];
+        String startDay = elementsStart[1];
+        String endYear = elementsEnd[2];
+        String endMonth = elementsEnd[0];
+        String endDay = elementsEnd[1];
+        startString = startYear + startMonth + startDay;
+        endString = endYear + endMonth + endDay;
+        int start = Integer.parseInt(startString);
+        int end = Integer.parseInt(endString);
+
+        int id = (int) request.getSession().getAttribute("employeeId");
 
         try {
-
-            int empId = dbUtil.loginToDB(name,password);
-
-            if(empId != -1) {
-                request.getSession().setAttribute("employeeId", empId);
-
-                List<Details>details = new ArrayList<>();
-                List<Vacation>vacations;
-
-                details.add(dbUtil.getEmployeeDetails(empId));
-                request.setAttribute("USER_DETAILS", details);
-
-                vacations = dbUtil.getVacations(empId);
-                request.setAttribute("USER_VACATIONS", vacations);
-
-
-                dispatcher = request.getRequestDispatcher("/client_view.jsp");
-            } else {
-                dispatcher = request.getRequestDispatcher("/index.jsp");
-            }
-            dispatcher.forward(request, response);
-
-        } catch (Exception e) {
-            e.printStackTrace();
-
+            dbUtil.setVacation(start,end,id);
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
         }
-    }
 
+    }
 }

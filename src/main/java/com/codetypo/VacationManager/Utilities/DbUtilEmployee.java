@@ -1,7 +1,6 @@
 package com.codetypo.VacationManager.Utilities;
 
 import com.codetypo.VacationManager.Models.Details;
-import com.codetypo.VacationManager.Models.Employee;
 import com.codetypo.VacationManager.Models.Vacation;
 
 import javax.sql.DataSource;
@@ -17,7 +16,6 @@ public class DbUtilEmployee extends DbUtil {
         this.dataSource = dataSource;
     }
 
-
     public List<Vacation> getVacations(int empId) throws Exception {
 
         List<Vacation> vacations = new ArrayList<>();
@@ -29,7 +27,7 @@ public class DbUtilEmployee extends DbUtil {
             // polaczenie z BD
             conn = dataSource.getConnection();
             // wyrazenie SQL
-            String sql = "SELECT vacation_id, begin_date, end_date,approved FROM employee_vacation ev  JOIN employees e ON ev.employee_id = e.id  JOIN vacations v ON ev.vacation_id = v.id  WHERE employee_id = ?;";
+            String sql = "SELECT v_id, v_begin_date, v_end_date,v_approved FROM vacations v  JOIN employees e ON v.v_employee_id = e.e_id WHERE v_employee_id =?;";
             statement = conn.prepareStatement(sql);
             statement.setInt(1, empId);
             System.out.println(statement.toString());
@@ -41,10 +39,10 @@ public class DbUtilEmployee extends DbUtil {
             while (resultSet.next()) {
 
                 // pobranie danych z rzedu
-                int      id         = resultSet.getInt("vacation_id");
-                Date     beginDate  = resultSet.getDate("begin_date");
-                Date     endDate    = resultSet.getDate("end_date");
-                boolean  approved   = resultSet.getBoolean("approved");
+                int      id         = resultSet.getInt("v_id");
+                Date     beginDate  = resultSet.getDate("v_begin_date");
+                Date     endDate    = resultSet.getDate("v_end_date");
+                boolean  approved   = resultSet.getBoolean("v_approved");
 
 
 
@@ -64,7 +62,7 @@ public class DbUtilEmployee extends DbUtil {
         return vacations;
     }
 
-   public int loginToDB (String login, String password) throws SQLException {
+    public int loginToDB (String login, String password) throws SQLException {
 
         int connected = -1;
         Connection conn = null;
@@ -79,7 +77,7 @@ public class DbUtilEmployee extends DbUtil {
             conn = dataSource.getConnection();
 
             // wyrazenie SQL
-            String sql = "SELECT * FROM employees WHERE employee_login = ? AND employee_password = ?;";
+            String sql = "SELECT * FROM employees WHERE e_employee_login = ? AND e_employee_password = ?;";
             statement = conn.prepareStatement(sql);
             statement.setString(1, login);
             statement.setString(2, password);
@@ -92,8 +90,8 @@ public class DbUtilEmployee extends DbUtil {
             while (resultSet.next()) {
 
                 // pobranie danych z rzedu
-                int id            = resultSet.getInt("id");
-                boolean isAdmin   = resultSet.getBoolean("is_admin");
+                int id            = resultSet.getInt("e_id");
+                boolean isAdmin   = resultSet.getBoolean("e_is_admin");
 
                 System.out.println("id: " + id);
                 System.out.println("isAdmin: " + isAdmin);
@@ -106,9 +104,6 @@ public class DbUtilEmployee extends DbUtil {
         }
         return connected;
     }
-
-
-
 
     public Details getEmployeeDetails(int empId) throws SQLException {
 
@@ -123,7 +118,7 @@ public class DbUtilEmployee extends DbUtil {
             conn = dataSource.getConnection();
 
             // wyrazenie SQL
-            String sql = "SELECT id, first_name, Last_name, email FROM details d where employee_id = ?;";
+            String sql = "SELECT d_id, d_first_name, d_Last_name, d_email, d_available_vacation_days FROM details d where d_employee_id = ?;";
             statement = conn.prepareStatement(sql);
             statement.setInt(1, empId);
 
@@ -134,14 +129,15 @@ public class DbUtilEmployee extends DbUtil {
             while (resultSet.next()) {
 
                 // pobranie danych z rzedu
-                int id              = resultSet.getInt("id");
-                String firstName    = resultSet.getString("first_name");
-                String lastName     = resultSet.getString("last_name");
-                String email        = resultSet.getString("email");
+                int id              = resultSet.getInt("d_id");
+                String firstName    = resultSet.getString("d_first_name");
+                String lastName     = resultSet.getString("d_last_name");
+                String email        = resultSet.getString("d_email");
+                int vacationDaysLeft= resultSet.getInt("d_available_vacation_days");
 
                 System.out.println("id: " + id);
                 System.out.println("name: " + firstName + " " + lastName);
-                details = new Details(id, firstName, lastName,email);            }
+                details = new Details(id, firstName, lastName,email,vacationDaysLeft);            }
 
         } finally {
             // zamkniecie obiektow JDBC
@@ -150,5 +146,29 @@ public class DbUtilEmployee extends DbUtil {
         return details;
     }
 
+    public boolean setVacation (int start, int end, int employeeId) throws SQLException {
+        Connection conn = null;
+        PreparedStatement statement = null;
+        ResultSet resultSet = null;
 
+        try {
+            // polaczenie z BD
+            conn = dataSource.getConnection();
+            // wyrazenie SQL
+            String sql = "INSERT INTO vacations (v_employee_id,v_begin_date,v_end_date,v_approved) VALUES (?,?,?,false);;";
+            statement = conn.prepareStatement(sql);
+            statement.setInt(1, employeeId);
+            statement.setInt(2, start);
+            statement.setInt(3, end);
+            System.out.println(statement.toString());
+
+            // wykonanie wyrazenia SQL
+            statement.executeUpdate();
+            System.out.println(resultSet);
+        } finally {
+            // zamkniecie obiektow JDBC
+            close(conn, statement, resultSet);
+        }
+        return true;
+    }
 }

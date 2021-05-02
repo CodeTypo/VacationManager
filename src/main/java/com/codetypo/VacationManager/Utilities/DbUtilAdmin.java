@@ -1,5 +1,6 @@
 package com.codetypo.VacationManager.Utilities;
 
+import com.codetypo.VacationManager.Models.DetailedVacation;
 import com.codetypo.VacationManager.Models.Employee;
 import com.codetypo.VacationManager.Models.Vacation;
 
@@ -42,10 +43,10 @@ public class DbUtilAdmin extends DbUtil {
 
             while (resultSet.next()) {
 
-                int id = resultSet.getInt("id");
-                String login = resultSet.getString("employee_login");
-                String password = resultSet.getString("employee_password");
-                boolean isEmployee = resultSet.getBoolean("is_admin");
+                int id = resultSet.getInt("e_id");
+                String login = resultSet.getString("e_employee_login");
+                String password = resultSet.getString("e_employee_password");
+                boolean isEmployee = resultSet.getBoolean("e_is_admin");
 
                 employees.add(new Employee(id, login, password, isEmployee));
 
@@ -56,7 +57,6 @@ public class DbUtilAdmin extends DbUtil {
         }
         return employees;
     }
-
 
     public List<Vacation> getVacations() throws Exception {
         List<Vacation> vacations = new ArrayList<>();
@@ -72,10 +72,10 @@ public class DbUtilAdmin extends DbUtil {
             resultSet = statement.executeQuery(sql);
 
             while (resultSet.next()) {
-                int id = resultSet.getInt("id");
-                Date beginDate = resultSet.getDate("begin_date");
-                Date endDate = resultSet.getDate("end_date");
-                boolean approved = resultSet.getBoolean("approved");
+                int id = resultSet.getInt("v_id");
+                Date beginDate = resultSet.getDate("v_begin_date");
+                Date endDate = resultSet.getDate("v_end_date");
+                boolean approved = resultSet.getBoolean("v_approved");
                 vacations.add(new Vacation(id, beginDate, endDate, approved));
             }
 
@@ -106,9 +106,9 @@ public class DbUtilAdmin extends DbUtil {
 
             if (resultSet.next()) {
 
-                String login = resultSet.getString("employee_login");
-                String password = resultSet.getString("employee_password");
-                boolean isEmployee = resultSet.getBoolean("employee_role");
+                String login = resultSet.getString("e_employee_login");
+                String password = resultSet.getString("e_employee_password");
+                boolean isEmployee = resultSet.getBoolean("e_employee_role");
 
                 employee = new Employee(adminID, login, password, isEmployee);
 
@@ -121,4 +121,39 @@ public class DbUtilAdmin extends DbUtil {
             close(conn, statement, resultSet);
         }
     }
+
+    public List<DetailedVacation> getDetailedVacations() throws Exception {
+        List<DetailedVacation> vacations = new ArrayList<>();
+
+        Connection conn = null;
+        Statement statement = null;
+        ResultSet resultSet = null;
+
+        try {
+            conn = DriverManager.getConnection(URL, name, password);
+            String sql = "SELECT v_id, v_employee_id,  d_first_name, d_last_name, d_email, v_begin_date, v_end_date, v_approved FROM vacations v  JOIN details d ON v.v_employee_id = d.d_employee_id;";
+            statement = conn.createStatement();
+            resultSet = statement.executeQuery(sql);
+
+            while (resultSet.next()) {
+                int id = resultSet.getInt("v_id");
+                int employeeId = resultSet.getInt("v_employee_id");
+                String firstName = resultSet.getString("d_first_name");
+                String lastName = resultSet.getString("d_last_name");
+                String email = resultSet.getString("d_email");
+                int vacationId = resultSet.getInt("v_id");
+                Date beginDate = resultSet.getDate("v_begin_date");
+                Date endDate = resultSet.getDate("v_end_date");
+                boolean approved = resultSet.getBoolean("v_approved");
+
+                vacations.add(new DetailedVacation(id,employeeId,firstName,lastName,email,vacationId,beginDate,endDate,approved));
+            }
+
+        } finally {
+            close(conn, statement, resultSet);
+        }
+        return vacations;
+    }
+
+
 }
