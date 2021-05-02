@@ -1,6 +1,7 @@
 package com.codetypo.VacationManager.Utilities;
 
 import com.codetypo.VacationManager.Models.Employee;
+import com.codetypo.VacationManager.Models.Vacation;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -54,6 +55,34 @@ public class DbUtilAdmin extends DbUtil {
             close(conn, statement, resultSet);
         }
         return employees;
+    }
+
+    @Override
+    public List<Vacation> getVacations() throws Exception {
+        List<Vacation> vacations = new ArrayList<>();
+
+        Connection conn = null;
+        Statement statement = null;
+        ResultSet resultSet = null;
+
+        try {
+            conn = DriverManager.getConnection(URL, name, password);
+            String sql = "SELECT * FROM vacations";
+            statement = conn.createStatement();
+            resultSet = statement.executeQuery(sql);
+
+            while (resultSet.next()) {
+                int id = resultSet.getInt("id");
+                Date beginDate = resultSet.getDate("begin_date");
+                Date endDate = resultSet.getDate("end_date");
+                boolean approved = resultSet.getBoolean("approved");
+                vacations.add(new Vacation(id, beginDate, endDate, approved));
+            }
+
+        } finally {
+            close(conn, statement, resultSet);
+        }
+        return vacations;
     }
 
     public Employee getEmployee(String id) throws Exception {

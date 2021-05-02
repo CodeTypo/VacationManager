@@ -1,6 +1,7 @@
 package com.codetypo.VacationManager.Utilities;
 
 import com.codetypo.VacationManager.Models.Employee;
+import com.codetypo.VacationManager.Models.Vacation;
 
 import javax.sql.DataSource;
 import java.sql.Connection;
@@ -45,12 +46,7 @@ public class DbUtilEmployee extends DbUtil {
                 int id                  = resultSet.getInt("id");
                 String login            = resultSet.getString("employee_login");
                 String password         = resultSet.getString("employee_password");
-                String role             = resultSet.getString("employee_role");
-                boolean isAdmin         = false;
-
-                if(role.equals("admin"))
-                    isAdmin = true;
-
+                boolean isAdmin             = resultSet.getBoolean("is_admin");
 
                 // dodanie do listy nowego obiektu
                 employees.add(new Employee(id, login, password, isAdmin));
@@ -65,5 +61,10 @@ public class DbUtilEmployee extends DbUtil {
 
         return employees;
 
+    }
+
+    @Override
+    List<Vacation> getVacations() throws Exception {
+        return null;
     }
 }

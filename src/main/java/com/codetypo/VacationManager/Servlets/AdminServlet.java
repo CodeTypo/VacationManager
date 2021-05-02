@@ -1,6 +1,7 @@
 package com.codetypo.VacationManager.Servlets;
 
 import com.codetypo.VacationManager.Models.Employee;
+import com.codetypo.VacationManager.Models.Vacation;
 import com.codetypo.VacationManager.Utilities.DbUtilAdmin;
 
 import javax.servlet.RequestDispatcher;
@@ -21,15 +22,12 @@ public class AdminServlet extends HttpServlet {
     private DbUtilAdmin dbUtil;
     private final String db_url = "jdbc:mysql://localhost:3306/vacationmanager?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=CET";
 
-
     @Override
     public void init(ServletConfig config) throws ServletException {
         super.init(config);
 
         try {
-
             dbUtil = new DbUtilAdmin(db_url);
-
         } catch (Exception e) {
             throw new ServletException(e);
         }
@@ -50,17 +48,23 @@ public class AdminServlet extends HttpServlet {
         if (validate(name, password)) {
             RequestDispatcher dispatcher = request.getRequestDispatcher("/admin_view.jsp");
             List<Employee> employeeList= null;
+            List<Vacation> vacationList= null;
 
             try {
-
                 employeeList = dbUtil.getEmployees();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
 
+            try {
+                vacationList = dbUtil.getVacations();
             } catch (Exception e) {
                 e.printStackTrace();
             }
 
             // dodanie listy do obiektu zadania
             request.setAttribute("EMPLOYEES_LIST", employeeList);
+            request.setAttribute("VACATIONS_LIST", vacationList);
 
             dispatcher.forward(request, response);
         } else {
@@ -83,7 +87,7 @@ public class AdminServlet extends HttpServlet {
             switch (command) {
 
                 case "LIST":
-                    listPhones(request, response);
+                    listEmployees(request, response);
                     break;
 
 //                case "ADD":
@@ -103,7 +107,7 @@ public class AdminServlet extends HttpServlet {
 //                    break;
 
                 default:
-                    listPhones(request, response);
+                    listEmployees(request, response);
             }
 
         } catch (Exception e) {
@@ -185,7 +189,7 @@ public class AdminServlet extends HttpServlet {
 //
 //    }
 
-    private void listPhones(HttpServletRequest request, HttpServletResponse response) throws Exception {
+    private void listEmployees(HttpServletRequest request, HttpServletResponse response) throws Exception {
 
         List<Employee> employeeList = dbUtil.getEmployees();
 

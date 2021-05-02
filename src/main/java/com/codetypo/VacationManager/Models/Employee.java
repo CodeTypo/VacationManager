@@ -3,11 +3,8 @@ package com.codetypo.VacationManager.Models;
 public class Employee {
 
     private int id;
-
     private String login;
-
     private String password;
-
     private boolean isAdmin;
 
     public Employee(int id, String login, String password, boolean isAdmin) {
