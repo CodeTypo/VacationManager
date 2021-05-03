@@ -24,18 +24,15 @@ public class DbUtilEmployee extends DbUtil {
         ResultSet resultSet = null;
 
         try {
-            // polaczenie z BD
             conn = dataSource.getConnection();
-            // wyrazenie SQL
+
             String sql = "SELECT v_id, v_begin_date, v_end_date,v_approved FROM vacations v  JOIN employees e ON v.v_employee_id = e.e_id WHERE v_employee_id =?;";
+
             statement = conn.prepareStatement(sql);
             statement.setInt(1, empId);
-            System.out.println(statement.toString());
 
-            // wykonanie wyrazenia SQL
             resultSet = statement.executeQuery();
-            System.out.println(resultSet);
-            // przetworzenie wyniku zapytania
+
             while (resultSet.next()) {
                 int id = resultSet.getInt("v_id");
                 Date beginDate = resultSet.getDate("v_begin_date");
@@ -63,26 +60,17 @@ public class DbUtilEmployee extends DbUtil {
         PreparedStatement statement = null;
         ResultSet resultSet = null;
 
-
         try {
-
-            // polaczenie z BD
             conn = dataSource.getConnection();
 
-            // wyrazenie SQL
             String sql = "SELECT * FROM employees WHERE e_employee_login = ? AND e_employee_password = ?;";
             statement = conn.prepareStatement(sql);
             statement.setString(1, login);
             statement.setString(2, password);
-            System.out.println(statement.toString());
 
-            // wykonanie wyrazenia SQL
             resultSet = statement.executeQuery();
 
-            // przetworzenie wyniku zapytania
             while (resultSet.next()) {
-
-                // pobranie danych z rzedu
                 int id = resultSet.getInt("e_id");
                 boolean isAdmin = resultSet.getBoolean("e_is_admin");
 
@@ -92,7 +80,6 @@ public class DbUtilEmployee extends DbUtil {
             }
 
         } finally {
-            // zamkniecie obiektow JDBC
             close(conn, statement, resultSet);
         }
         return connected;
@@ -106,35 +93,25 @@ public class DbUtilEmployee extends DbUtil {
         Details details = null;
 
         try {
-
-            // polaczenie z BD
             conn = dataSource.getConnection();
 
-            // wyrazenie SQL
             String sql = "SELECT d_id, d_first_name, d_Last_name, d_email, d_available_vacation_days FROM details d where d_employee_id = ?;";
             statement = conn.prepareStatement(sql);
             statement.setInt(1, empId);
 
-            // wykonanie wyrazenia SQL
             resultSet = statement.executeQuery();
 
-            // przetworzenie wyniku zapytania
             while (resultSet.next()) {
 
-                // pobranie danych z rzedu
                 int id = resultSet.getInt("d_id");
                 String firstName = resultSet.getString("d_first_name");
                 String lastName = resultSet.getString("d_last_name");
                 String email = resultSet.getString("d_email");
                 int vacationDaysLeft = resultSet.getInt("d_available_vacation_days");
-
-                System.out.println("id: " + id);
-                System.out.println("name: " + firstName + " " + lastName);
                 details = new Details(id, firstName, lastName, email, vacationDaysLeft);
             }
 
         } finally {
-            // zamkniecie obiektow JDBC
             close(conn, statement, resultSet);
         }
         return details;
@@ -161,10 +138,6 @@ public class DbUtilEmployee extends DbUtil {
                 while (resultSet.next()) {
                     Date beginDate = resultSet.getDate("v_begin_date");
                     Date endDate = resultSet.getDate("v_end_date");
-
-                    System.out.println(beginDate);
-                    System.out.println(endDate);
-
                     String[] bDate = String.valueOf(beginDate).split("-");
                     String[] eDate = String.valueOf(endDate).split("-");
 
@@ -189,7 +162,7 @@ public class DbUtilEmployee extends DbUtil {
         Connection conn = dataSource.getConnection();
         PreparedStatement statement;
 
-        ResultSet resultSet = null;
+        ResultSet resultSet;
 
         String sql = "SELECT d_available_vacation_days FROM details where d_employee_id = ?;";
         statement = conn.prepareStatement(sql);
