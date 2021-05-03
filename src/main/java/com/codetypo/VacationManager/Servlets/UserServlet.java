@@ -23,9 +23,6 @@ public class UserServlet extends HttpServlet {
     private DataSource dataSource;
     private DbUtilEmployee dbUtil;
 
-
-
-
     public UserServlet() {
         // Obtain our environment naming context
         Context initCtx;
@@ -77,7 +74,6 @@ public class UserServlet extends HttpServlet {
 
                 vacations = dbUtil.getVacations(empId);
                 request.setAttribute("USER_VACATIONS", vacations);
-
 
                 dispatcher = request.getRequestDispatcher("/client_view.jsp");
             } else {

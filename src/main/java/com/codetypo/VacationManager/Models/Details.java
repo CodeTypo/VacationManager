@@ -15,9 +15,6 @@ public class Details {
     private String email;
     private int vacationDaysLeft;
 
-
-
-
     public Details(String firstName, String lastName, String email, int vacationDaysLeft) {
         this.firstName = firstName;
         this.lastName = lastName;

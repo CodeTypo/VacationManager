@@ -8,7 +8,7 @@
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min.js"></script>
 </head>
 <body>
-<div class="container" style="margin: 250px 350px;">
+<div class="container" style="margin: 250px 370px;">
     <button type="button" class="btn btn-primary" style="height: 200px; width: 400px;" onclick="window.location.href='user_login.jsp';"><span
             class="glyphicon glyphicon-user"></span> Employee
     </button>
@@ -16,6 +16,5 @@
             class="glyphicon glyphicon-user"></span> Admin
     </button>
 </div>
-
 </body>
 </html>
