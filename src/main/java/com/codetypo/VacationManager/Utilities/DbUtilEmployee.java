@@ -137,7 +137,8 @@ public class DbUtilEmployee extends DbUtil {
 
                 System.out.println("id: " + id);
                 System.out.println("name: " + firstName + " " + lastName);
-                details = new Details(id, firstName, lastName,email,vacationDaysLeft);            }
+                details = new Details(id, firstName, lastName,email,vacationDaysLeft);
+            }
 
         } finally {
             // zamkniecie obiektow JDBC

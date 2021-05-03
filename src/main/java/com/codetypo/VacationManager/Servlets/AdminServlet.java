@@ -1,6 +1,7 @@
 package com.codetypo.VacationManager.Servlets;
 
 import com.codetypo.VacationManager.Models.DetailedVacation;
+import com.codetypo.VacationManager.Models.Details;
 import com.codetypo.VacationManager.Models.Employee;
 import com.codetypo.VacationManager.Utilities.DbUtilAdmin;
 
@@ -34,16 +35,17 @@ public class AdminServlet extends HttpServlet {
     }
 
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    }
 
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws
+            ServletException, IOException {
         response.setContentType("text/html");
 
-        String name = request.getParameter("loginInput");
-        String password = request.getParameter("passwordInput");
-        System.out.println("login:" + name);
-        System.out.println("pswd:" + password);
+        String name;
+        String password;
 
-        request.getSession().setAttribute("login", request.getParameter  ("loginInput"));
-        request.getSession().setAttribute("password", request.getParameter  ("passwordInput"));
+        name = (String) request.getSession().getAttribute("login");
+        password = (String) request.getSession().getAttribute("password");
 
 
         dbUtil.setName(name);
@@ -53,6 +55,7 @@ public class AdminServlet extends HttpServlet {
             RequestDispatcher dispatcher = request.getRequestDispatcher("/admin_view.jsp");
             List<Employee> employeeList= null;
             List<DetailedVacation> vacationList= null;
+            List<Details> detailsList= null;
 
             try {
                 employeeList = dbUtil.getEmployees();
@@ -66,37 +69,21 @@ public class AdminServlet extends HttpServlet {
                 e.printStackTrace();
             }
 
+            try {
+                detailsList = dbUtil.getEmployeeDetails();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
             // dodanie listy do obiektu zadania
-            request.setAttribute("EMPLOYEES_LIST", employeeList);
+            request.setAttribute("USERS_LIST", employeeList);
             request.setAttribute("VACATIONS_LIST", vacationList);
+            request.setAttribute("DETAILS_LIST", detailsList);
 
             dispatcher.forward(request, response);
         } else {
             RequestDispatcher dispatcher = request.getRequestDispatcher("/index.jsp");
             dispatcher.include(request, response);
-        }
-    }
-
-    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws
-            ServletException, IOException {
-
-        try {
-            String command = request.getParameter("command");
-            if (command == null)
-                command = "LIST";
-
-            switch (command) {
-
-                case "LIST":
-                    listEmployees(request, response);
-                    break;
-
-                default:
-                    listEmployees(request, response);
-            }
-
-        } catch (Exception e) {
-            throw new ServletException(e);
         }
     }
 

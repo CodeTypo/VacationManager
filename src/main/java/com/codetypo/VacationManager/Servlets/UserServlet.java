@@ -59,11 +59,6 @@ public class UserServlet extends HttpServlet {
         String name;
         String password;
 
-        if(request.getSession().getAttribute("login") == null) {
-            request.getSession().setAttribute("login", request.getParameter("userLogin"));
-            request.getSession().setAttribute("password", request.getParameter("userPassword"));
-        }
-
         name = (String) request.getSession().getAttribute("login");
         password = (String) request.getSession().getAttribute("password");
 

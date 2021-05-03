@@ -1,6 +1,7 @@
 package com.codetypo.VacationManager.Utilities;
 
 import com.codetypo.VacationManager.Models.DetailedVacation;
+import com.codetypo.VacationManager.Models.Details;
 import com.codetypo.VacationManager.Models.Employee;
 import com.codetypo.VacationManager.Models.Vacation;
 
@@ -155,5 +156,72 @@ public class DbUtilAdmin extends DbUtil {
         return vacations;
     }
 
+    public List<Details> getEmployeeDetails() throws SQLException {
+        List<Details> details = new ArrayList<>();
 
+        Connection conn = null;
+        Statement statement = null;
+        ResultSet resultSet = null;
+
+        try {
+            conn = DriverManager.getConnection(URL, name, password);
+            String sql = "SELECT d_id, d_first_name, d_Last_name, d_email, d_available_vacation_days FROM details;";
+            statement = conn.createStatement();
+            resultSet = statement.executeQuery(sql);
+
+            while (resultSet.next()) {
+
+                int id              = resultSet.getInt("d_id");
+                String firstName    = resultSet.getString("d_first_name");
+                String lastName     = resultSet.getString("d_last_name");
+                String email        = resultSet.getString("d_email");
+                int vacationDaysLeft= resultSet.getInt("d_available_vacation_days");
+                System.out.println("id: " + id);
+                System.out.println("name: " + firstName + " " + lastName);
+                details.add(new Details(id, firstName, lastName,email,vacationDaysLeft));
+            }
+
+        } finally {
+            close(conn, statement, resultSet);
+        }
+        return details;
+
+
+    }
+
+    public boolean approveVacation(int id) throws SQLException {
+        Connection conn = null;
+        PreparedStatement statement = null;
+        ResultSet resultSet = null;
+
+        try {
+            conn = DriverManager.getConnection(URL, name, password);
+            String sql = "UPDATE vacations SET v_approved = true WHERE v_id = ?;";
+
+            statement = conn.prepareStatement(sql);
+            statement.setInt(1, id);
+            statement.executeUpdate();
+        } finally {
+            close(conn, statement, resultSet);
+        }
+        return true;
+    }
+
+    public boolean deleteVacation(int id) throws SQLException {
+        Connection conn = null;
+        PreparedStatement statement = null;
+        ResultSet resultSet = null;
+
+        try {
+            conn = DriverManager.getConnection(URL, name, password);
+            String sql = "DELETE FROM vacations WHERE v_id = ?;";
+
+            statement = conn.prepareStatement(sql);
+            statement.setInt(1, id);
+            statement.executeUpdate();
+        } finally {
+            close(conn, statement, resultSet);
+        }
+        return true;
+    }
 }

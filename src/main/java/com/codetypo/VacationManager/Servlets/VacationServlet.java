@@ -1,7 +1,5 @@
 package com.codetypo.VacationManager.Servlets;
 
-import com.codetypo.VacationManager.Models.Details;
-import com.codetypo.VacationManager.Models.Vacation;
 import com.codetypo.VacationManager.Utilities.DbUtilEmployee;
 
 import javax.naming.Context;
@@ -79,6 +77,5 @@ public class VacationServlet extends HttpServlet {
         } catch (SQLException throwables) {
             throwables.printStackTrace();
         }
-
     }
 }

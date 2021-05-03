@@ -25,7 +25,7 @@
                     <a class="nav-link" href="#">Database</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="#">Manage requests</a>
+                    <a class="nav-link" href="VacationRequestManagerServlet">Manage requests</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="#">Browse vacations</a>
@@ -36,7 +36,7 @@
 
         <br>
         <br>
-        <h1>Employees</h1>
+        <h1>Users</h1>
         <br>
 
         <table class="table table-hover">
@@ -49,8 +49,8 @@
             </tr>
             </thead>
             <tbody>
-                <jsp:useBean id="EMPLOYEES_LIST" scope="request" type="java.util.List"/>
-                <c:forEach var="tmpEmployee" items="${EMPLOYEES_LIST}">
+                <jsp:useBean id="USERS_LIST" scope="request" type="java.util.List"/>
+                <c:forEach var="tmpEmployee" items="${USERS_LIST}">
                     <tr class="table-secondary">
                         <th scope="row">${tmpEmployee.id}</th>
                         <td>${tmpEmployee.login}</td>
@@ -61,10 +61,40 @@
             </tbody>
         </table>
 
+
         <br>
         <br>
-        <h1>Vacations</h1>
+        <h1>Details</h1>
         <br>
+
+        <table class="table table-hover">
+            <thead>
+            <tr>
+                <th scope="col">#</th>
+                <th scope="col">First name</th>
+                <th scope="col">Last name</th>
+                <th scope="col">Email</th>
+                <th scope="col">Vacation days left</th>
+            </tr>
+            </thead>
+            <tbody>
+            <jsp:useBean id="DETAILS_LIST" scope="request" type="java.util.List"/>
+            <c:forEach var="tmpDetail" items="${DETAILS_LIST}">
+                <tr class="table-secondary">
+                    <th scope="row">${tmpDetail.id}</th>
+                    <td>${tmpDetail.firstName}</td>
+                    <td>${tmpDetail.lastName}</td>
+                    <td>${tmpDetail.email}</td>
+                    <td>${tmpDetail.vacationDaysLeft}</td>
+                </tr>
+            </c:forEach>
+            </tbody>
+        </table>
+
+            <br>
+            <br>
+            <h1>Vacations</h1>
+            <br>
 
 
         <table class="table table-hover">
@@ -79,8 +109,6 @@
                 <th scope="col">Begins</th>
                 <th scope="col">Ends</th>
                 <th scope="col">Approved</th>
-                <th scope="col">Approve</th>
-                <th scope="col">Deny</th>
             </tr>
             </thead>
             <tbody>
@@ -100,12 +128,6 @@
                     <td>${tmpVacation.beginDate}</td>
                     <td>${tmpVacation.endDate}</td>
                     <td>${tmpVacation.approved}</td>
-                    <td><a href="${approveLink}">
-                        <button type="button" class="btn btn-success">Approve</button>
-                    </a>
-                    <td><a href="${approveLink}">
-                        <button type="button" class="btn btn-danger">Deny</button>
-                    </a>
                 </tr>
             </c:forEach>
             </tbody>
