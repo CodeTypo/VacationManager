@@ -1,4 +1,15 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
+
+<%
+    if(request.getParameter("loginInput") != null) {
+        request.getSession().setAttribute("login", request.getParameter("loginInput"));
+        request.getSession().setAttribute("password", request.getParameter("passwordInput"));
+        System.out.println(request.getSession().getAttribute("login"));
+        System.out.println(request.getSession().getAttribute("password"));
+        response.sendRedirect("AdminServlet");
+    }
+%>
+
 <html>
 <head>
     <meta charset="utf-8">
@@ -10,7 +21,7 @@
 
 <body>
 <div class="login-dark">
-    <form action="AdminServlet" method="post">
+    <form action="admin_login.jsp" method="post">
         <h2 class="sr-only">Login Form</h2>
         <div class="illustration"><i class="icon ion-ios-locked-outline"></i></div>
         <div class="form-group"><input class="form-control" type="text" name="loginInput" placeholder="Login"></div>
