@@ -53,10 +53,14 @@ public class VacationRequestManagerServlet extends HttpServlet {
                 case "APPROVE":
                     id = Integer.parseInt(request.getParameter("vacationID"));
                     approveVacation(request,response,id);
+                    listVacations(request, response);
+                    break;
 
                 case "DENY":
                     id = Integer.parseInt(request.getParameter("vacationID"));
                     denyVacation(request,response,id);
+                    listVacations(request, response);
+                    break;
 
                 default:
                     listVacations(request, response);
@@ -72,9 +76,9 @@ public class VacationRequestManagerServlet extends HttpServlet {
     private void approveVacation(HttpServletRequest request, HttpServletResponse response, int id) throws SQLException, ServletException, IOException {
         String name = (String) request.getSession().getAttribute("login");
         String password = (String) request.getSession().getAttribute("password");
-
         dbUtil.setName(name);
         dbUtil.setPassword(password);
+
         dbUtil.approveVacation(id);
     }
 

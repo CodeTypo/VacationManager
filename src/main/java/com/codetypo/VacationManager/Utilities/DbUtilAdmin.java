@@ -197,7 +197,6 @@ public class DbUtilAdmin extends DbUtil {
         try {
             conn = DriverManager.getConnection(URL, name, password);
             String sql = "UPDATE vacations SET v_approved = true WHERE v_id = ?;";
-
             statement = conn.prepareStatement(sql);
             statement.setInt(1, id);
             statement.executeUpdate();
