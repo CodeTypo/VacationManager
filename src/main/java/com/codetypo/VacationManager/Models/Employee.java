@@ -14,7 +14,7 @@ public class Employee {
     private String password;
     private boolean isAdmin;
 
-    public boolean getisAdmin() {
+    public boolean getIsAdmin() {
         return isAdmin;
     }
 

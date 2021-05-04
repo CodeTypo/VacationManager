@@ -82,7 +82,7 @@
           <td><a href="${approveLink}">
             <button type="button" class="btn btn-success">Approve</button>
           </a>
-          <td><a href="${approveLink}">
+          <td><a href="${denyLink}">
             <button type="button" class="btn btn-danger">Deny</button>
           </a>
         </tr>

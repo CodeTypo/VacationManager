@@ -5,6 +5,9 @@ import com.codetypo.VacationManager.Models.Details;
 import com.codetypo.VacationManager.Models.Employee;
 import com.codetypo.VacationManager.Utilities.DbUtilAdmin;
 
+import javax.naming.Context;
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
@@ -12,78 +15,94 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.sql.Connection;
-import java.sql.DriverManager;
+import javax.sql.DataSource;
 import java.util.List;
 
 @WebServlet("/AdminServlet")
 public class AdminServlet extends HttpServlet {
 
+    private DataSource dataSource;
     private DbUtilAdmin dbUtil;
-    private final String db_url = "jdbc:mysql://localhost:3306/vacationmanager?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=CET";
+
+    public AdminServlet() {
+
+        Context initCtx;
+        
+        try {
+            initCtx = new InitialContext();
+            Context envCtx = (Context) initCtx.lookup("java:comp/env");
+            dataSource = (DataSource)
+                    envCtx.lookup("jdbc/vacationmanager");
+        } catch (NamingException e) {
+            e.printStackTrace();
+        }
+    }
 
     @Override
     public void init(ServletConfig config) throws ServletException {
-        super.init(config);
-
+        super.init();
         try {
-            dbUtil = new DbUtilAdmin(db_url);
+            dbUtil = new DbUtilAdmin(dataSource);
         } catch (Exception e) {
             throw new ServletException(e);
         }
     }
 
-    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) {
     }
 
-    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws
-            ServletException, IOException {
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) {
+
         response.setContentType("text/html");
 
+        RequestDispatcher dispatcher;
         String name;
         String password;
 
         name = (String) request.getSession().getAttribute("login");
         password = (String) request.getSession().getAttribute("password");
 
+        try {
+            int empId = dbUtil.loginToDB(name, password);
 
-        dbUtil.setName(name);
-        dbUtil.setPassword(password);
+            if (empId != -1) {
 
-        if (validate(name, password)) {
-            RequestDispatcher dispatcher = request.getRequestDispatcher("/admin_view.jsp");
-            List<Employee> employeeList= null;
-            List<DetailedVacation> vacationList= null;
-            List<Details> detailsList= null;
+                dispatcher = request.getRequestDispatcher("/admin_view.jsp");
+                List<Employee> employeeList = null;
+                List<DetailedVacation> vacationList = null;
+                List<Details> detailsList = null;
 
-            try {
-                employeeList = dbUtil.getEmployees();
-            } catch (Exception e) {
-                e.printStackTrace();
+                try {
+                    employeeList = dbUtil.getEmployees();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
+                try {
+                    vacationList = dbUtil.getDetailedVacations();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
+                try {
+                    detailsList = dbUtil.getEmployeeDetails();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
+                request.setAttribute("USERS_LIST", employeeList);
+                request.setAttribute("VACATIONS_LIST", vacationList);
+                request.setAttribute("DETAILS_LIST", detailsList);
+
+                dispatcher.forward(request, response);
+
+            } else {
+                dispatcher = request.getRequestDispatcher("/index.jsp");
+                dispatcher.include(request, response);
             }
+        } catch (Exception e) {
+            e.printStackTrace();
 
-            try {
-                vacationList = dbUtil.getDetailedVacations();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-
-            try {
-                detailsList = dbUtil.getEmployeeDetails();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-
-            // dodanie listy do obiektu zadania
-            request.setAttribute("USERS_LIST", employeeList);
-            request.setAttribute("VACATIONS_LIST", vacationList);
-            request.setAttribute("DETAILS_LIST", detailsList);
-
-            dispatcher.forward(request, response);
-        } else {
-            RequestDispatcher dispatcher = request.getRequestDispatcher("/index.jsp");
-            dispatcher.include(request, response);
         }
     }
 
@@ -91,32 +110,10 @@ public class AdminServlet extends HttpServlet {
 
         List<Employee> employeeList = dbUtil.getEmployees();
 
-        // dodanie listy do obiektu zadania
         request.setAttribute("EMPLOYEES_LIST", employeeList);
 
-        // dodanie request dispatcher
         RequestDispatcher dispatcher = request.getRequestDispatcher("/admin_view.jsp");
 
-        // przekazanie do JSP
         dispatcher.forward(request, response);
-
-    }
-
-
-    private boolean validate(String name, String pass) {
-        boolean status = false;
-        try {
-            Class.forName("com.mysql.cj.jdbc.Driver");
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-        }
-        Connection conn = null;
-        try {
-            conn = DriverManager.getConnection(db_url, name, pass);
-            status = true;
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return status;
     }
 }

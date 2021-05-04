@@ -1,12 +1,8 @@
 package com.codetypo.VacationManager.Utilities;
 
-import com.codetypo.VacationManager.Models.Employee;
-import com.codetypo.VacationManager.Models.Vacation;
-
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.Statement;
-import java.util.List;
 
 public abstract class DbUtil {
 
