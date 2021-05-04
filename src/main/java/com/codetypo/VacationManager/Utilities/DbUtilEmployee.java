@@ -5,6 +5,8 @@ import com.codetypo.VacationManager.Models.Vacation;
 
 import javax.sql.DataSource;
 import java.sql.*;
+import java.time.LocalDate;
+import java.time.Period;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -118,14 +120,23 @@ public class DbUtilEmployee extends DbUtil {
     }
 
     public boolean setVacation(int start, int end, int employeeId) throws SQLException {
+
         Connection conn = null;
         PreparedStatement statement = null;
         ResultSet resultSet = null;
 
+        String startDay = String.valueOf(start);
+        String endDay = String.valueOf(end);
+
+        LocalDate bDate = LocalDate.parse(startDay.substring(0, 4) + "-" + startDay.substring(4, 6) + "-" + startDay.substring(6, 8));
+        LocalDate eDate = LocalDate.parse(endDay.substring(0, 4) + "-" + endDay.substring(4, 6) + "-" + endDay.substring(6, 8));
+
         try {
             conn = dataSource.getConnection();
 
-            int vacationDays = end - start + 1;
+            int vacationDays = Period.between(bDate, eDate).getDays() + 1;
+
+            System.out.println(vacationDays);
 
             if (vacationDays <= availableVacationDays(employeeId)) {
 
@@ -138,11 +149,9 @@ public class DbUtilEmployee extends DbUtil {
                 while (resultSet.next()) {
                     Date beginDate = resultSet.getDate("v_begin_date");
                     Date endDate = resultSet.getDate("v_end_date");
-                    String[] bDate = String.valueOf(beginDate).split("-");
-                    String[] eDate = String.valueOf(endDate).split("-");
 
-                    if (start >= Integer.parseInt(bDate[0] + bDate[1] + bDate[2]) & start <= Integer.parseInt(eDate[0] + eDate[1] + eDate[2]) |
-                            start + vacationDays <= Integer.parseInt(eDate[0] + eDate[1] + eDate[2])) {
+                    if ((Period.between(LocalDate.parse(beginDate.toString()), bDate).getDays() >= 0 & Period.between(LocalDate.parse(endDate.toString()), bDate).getDays() <= 0) ||
+                            Period.between(bDate.plusDays(vacationDays), LocalDate.parse(endDate.toString())).getDays() >= 0) {
                         System.out.println("You have vacation between these days!");
                     } else {
                         updateVacationsAndDetails(employeeId, vacationDays, start, end);
@@ -151,7 +160,6 @@ public class DbUtilEmployee extends DbUtil {
             } else {
                 System.out.println("You cannot take that many vacation days!");
             }
-
         } finally {
             close(conn, statement, resultSet);
         }

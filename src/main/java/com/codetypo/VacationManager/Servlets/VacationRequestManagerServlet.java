@@ -4,7 +4,11 @@ import com.codetypo.VacationManager.Models.DetailedVacation;
 import com.codetypo.VacationManager.Models.Details;
 import com.codetypo.VacationManager.Models.Employee;
 import com.codetypo.VacationManager.Utilities.DbUtilAdmin;
+import com.codetypo.VacationManager.Utilities.DbUtilEmployee;
 
+import javax.naming.Context;
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
@@ -12,6 +16,7 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.sql.DataSource;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -22,14 +27,28 @@ import java.util.List;
 public class VacationRequestManagerServlet extends HttpServlet {
 
     private DbUtilAdmin dbUtil;
+    private DataSource dataSource;
     private final String db_url = "jdbc:mysql://localhost:3306/vacationmanager?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=CET";
 
-    @Override
-    public void init(ServletConfig config) throws ServletException {
-        super.init(config);
-
+    public VacationRequestManagerServlet() {
+        Context initCtx;
         try {
-            dbUtil = new DbUtilAdmin(db_url);
+            initCtx = new InitialContext();
+            Context envCtx = (Context) initCtx.lookup("java:comp/env");
+            // Look up our data source
+            dataSource = (DataSource)
+                    envCtx.lookup("jdbc/vacationmanager");
+        } catch (NamingException e) {
+            e.printStackTrace();
+        }
+    }
+
+
+    @Override
+    public void init() throws ServletException {
+        super.init();
+        try {
+            dbUtil = new DbUtilAdmin(dataSource);
         } catch (Exception e) {
             throw new ServletException(e);
         }
@@ -50,6 +69,7 @@ public class VacationRequestManagerServlet extends HttpServlet {
                 case "LIST":
                     listVacations(request, response);
                     break;
+
                 case "APPROVE":
                     id = Integer.parseInt(request.getParameter("vacationID"));
                     approveVacation(request,response,id);
