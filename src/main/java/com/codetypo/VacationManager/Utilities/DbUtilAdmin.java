@@ -13,7 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class DbUtilAdmin extends DbUtil {
-    
+
     private String name;
     private String password;
     private DataSource dataSource;

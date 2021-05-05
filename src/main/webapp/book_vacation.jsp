@@ -38,7 +38,7 @@
                         <a class="nav-link" href="UserServlet">Home</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#">My requests</a>
+                        <a class="nav-link" href="RequestsServlet">My requests</a>
                     </li>
                     <li class="nav-item active">
                         <a class="nav-link" href="#">Book Vacation</a>

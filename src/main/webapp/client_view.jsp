@@ -31,7 +31,7 @@
                         <a class="nav-link" href="#">Home</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#">My requests</a>
+                        <a class="nav-link" href="RequestsServlet">My requests</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="book_vacation.jsp">Book Vacation</a>
