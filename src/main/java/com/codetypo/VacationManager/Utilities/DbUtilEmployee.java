@@ -13,9 +13,19 @@ import java.util.List;
 public class DbUtilEmployee extends DbUtil {
 
     private DataSource dataSource;
+    private String name;
+    private String password;
 
     public DbUtilEmployee(DataSource dataSource) {
         this.dataSource = dataSource;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
     }
 
     public List<Vacation> getVacations(int empId) throws Exception {
@@ -52,6 +62,9 @@ public class DbUtilEmployee extends DbUtil {
         } finally {
             close(conn, statement, resultSet);
         }
+
+        System.out.println(vacations.size());
+
         return vacations;
     }
 
@@ -135,8 +148,6 @@ public class DbUtilEmployee extends DbUtil {
             conn = dataSource.getConnection();
 
             int vacationDays = Period.between(bDate, eDate).getDays() + 1;
-
-            System.out.println(vacationDays);
 
             if (vacationDays <= availableVacationDays(employeeId)) {
 
