@@ -14,6 +14,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.sql.DataSource;
 import java.io.IOException;
+import java.sql.SQLException;
+import java.time.LocalDate;
 import java.util.List;
 
 @WebServlet("/RequestsServlet")
@@ -96,7 +98,18 @@ public class RequestsServlet extends HttpServlet {
         dispatcher.forward(request, response);
     }
 
-    private void changeDate(HttpServletRequest request, HttpServletResponse response, int id){
-        System.out.println("Date changed! Vacation's id: " + id);
+    private void changeDate(HttpServletRequest request, HttpServletResponse response, int vacationID) throws SQLException {
+//        System.out.println("Date changed! Vacation's id: " + id);
+
+        String name = (String) request.getSession().getAttribute("login");
+        String password = (String) request.getSession().getAttribute("password");
+
+        dbUtil.setName(name);
+        dbUtil.setPassword(password);
+
+        LocalDate beginDate = LocalDate.parse("2021-06-10");
+        LocalDate endDate = LocalDate.parse("2021-06-13");
+
+        dbUtil.changeDate(vacationID, beginDate, endDate);
     }
 }

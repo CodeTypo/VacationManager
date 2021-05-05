@@ -6,7 +6,7 @@ import com.codetypo.VacationManager.Models.Vacation;
 import javax.sql.DataSource;
 import java.sql.*;
 import java.time.LocalDate;
-import java.time.Period;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -134,47 +134,102 @@ public class DbUtilEmployee extends DbUtil {
 
     public boolean setVacation(int start, int end, int employeeId) throws SQLException {
 
-        Connection conn = null;
-        PreparedStatement statement = null;
-        ResultSet resultSet = null;
-
         String startDay = String.valueOf(start);
         String endDay = String.valueOf(end);
 
         LocalDate bDate = LocalDate.parse(startDay.substring(0, 4) + "-" + startDay.substring(4, 6) + "-" + startDay.substring(6, 8));
         LocalDate eDate = LocalDate.parse(endDay.substring(0, 4) + "-" + endDay.substring(4, 6) + "-" + endDay.substring(6, 8));
 
-        try {
-            conn = dataSource.getConnection();
+        int vacationDays = (int) ChronoUnit.DAYS.between(bDate, eDate) + 1;
 
-            int vacationDays = Period.between(bDate, eDate).getDays() + 1;
-
-            if (vacationDays <= availableVacationDays(employeeId)) {
-
-                String sql = "SELECT v_begin_date, v_end_date FROM vacations WHERE v_employee_id = ?;";
-                statement = conn.prepareStatement(sql);
-                statement.setInt(1, employeeId);
-
-                resultSet = statement.executeQuery();
-
-                while (resultSet.next()) {
-                    Date beginDate = resultSet.getDate("v_begin_date");
-                    Date endDate = resultSet.getDate("v_end_date");
-
-                    if ((Period.between(LocalDate.parse(beginDate.toString()), bDate).getDays() >= 0 & Period.between(LocalDate.parse(endDate.toString()), bDate).getDays() <= 0) ||
-                            Period.between(bDate.plusDays(vacationDays), LocalDate.parse(endDate.toString())).getDays() >= 0) {
-                        System.out.println("You have vacation between these days!");
-                    } else {
-                        updateVacationsAndDetails(employeeId, vacationDays, start, end);
-                    }
-                }
-            } else {
-                System.out.println("You cannot take that many vacation days!");
-            }
-        } finally {
-            close(conn, statement, resultSet);
+        if (isDateOK(employeeId, bDate, eDate)) {
+            updateVacationsAndDetails(employeeId, vacationDays, start, end);
+        } else {
+            System.out.println("You cannot have a vacation in these days!");
         }
+
         return true;
+    }
+
+    public void changeDate(int vacationID, LocalDate beginDate, LocalDate endDate) throws SQLException {
+
+        Connection conn = dataSource.getConnection();
+        PreparedStatement statement;
+        ResultSet resultSet;
+        int employeeID = 0;
+        Date date1 = null;
+        Date date2 = null;
+
+        String sql = "SELECT v_id, v_employee_id, v_begin_date, v_end_date, v_approved FROM vacations WHERE v_id = ?";
+        statement = conn.prepareStatement(sql);
+        statement.setInt(1, vacationID);
+
+        resultSet = statement.executeQuery();
+
+        while (resultSet.next()) {
+            employeeID = resultSet.getInt("v_employee_id");
+            date1 = resultSet.getDate("v_begin_date");
+            date2 = resultSet.getDate("v_end_date");
+        }
+
+        if (isDateOK(employeeID, beginDate, endDate)) {
+
+            String sql2 = "UPDATE vacations SET v_begin_date = ? , v_end_date = ?, v_approved = ? WHERE v_id = ?;";
+            statement = conn.prepareStatement(sql2);
+            statement.setDate(1, Date.valueOf(beginDate));
+            statement.setDate(2, Date.valueOf(endDate));
+            statement.setBoolean(3, false);
+            statement.setInt(4, vacationID);
+
+            statement.executeUpdate();
+
+            int currentMargin = (int) ChronoUnit.DAYS.between(beginDate, endDate) + 1;
+            int previousMargin = (int) ChronoUnit.DAYS.between(LocalDate.parse(date1.toString()), LocalDate.parse(date2.toString())) + 1;
+
+            String sql3 = "UPDATE details SET d_available_vacation_days = ? WHERE d_employee_id = ?;";
+            statement = conn.prepareStatement(sql3);
+            statement.setInt(1, availableVacationDays(employeeID) + (previousMargin - currentMargin));
+            statement.setInt(2, employeeID);
+            statement.executeUpdate();
+        }
+    }
+
+    private boolean isDateOK(int employeeID, LocalDate beginDate, LocalDate endDate) throws SQLException {
+
+        Connection conn = dataSource.getConnection();
+        PreparedStatement statement;
+        ResultSet resultSet;
+
+        boolean isDateOK = false;
+
+        int vacationDays = (int) ChronoUnit.DAYS.between(beginDate, endDate) + 1;
+
+        if (vacationDays <= availableVacationDays(employeeID)) {
+            String sql = "SELECT v_begin_date, v_end_date FROM vacations WHERE v_employee_id = ?;";
+            statement = conn.prepareStatement(sql);
+            statement.setInt(1, employeeID);
+
+            resultSet = statement.executeQuery();
+
+            while (resultSet.next()) {
+                Date bDate = resultSet.getDate("v_begin_date");
+                Date eDate = resultSet.getDate("v_end_date");
+
+                int firstCondition = (int) ChronoUnit.DAYS.between(LocalDate.parse(bDate.toString()), beginDate);
+                int secondCondition = (int) ChronoUnit.DAYS.between(LocalDate.parse(eDate.toString()), beginDate);
+                int thirdCondition = (int) ChronoUnit.DAYS.between(LocalDate.parse(bDate.toString()), endDate);
+                int fourthCondition = (int) ChronoUnit.DAYS.between(LocalDate.parse(eDate.toString()), endDate);
+                int fifthCondition = (int) ChronoUnit.DAYS.between(LocalDate.parse(eDate.toString()), beginDate);
+
+                if((firstCondition < 0 & secondCondition < 0 & fourthCondition < 0 & thirdCondition < 0) || fifthCondition > 0) {
+                    isDateOK = true;
+                } else {
+                    return false;
+                }
+            }
+        }
+
+        return isDateOK;
     }
 
     private int availableVacationDays(int employeeID) throws SQLException {
