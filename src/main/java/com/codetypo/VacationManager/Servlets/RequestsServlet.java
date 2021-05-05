@@ -107,8 +107,8 @@ public class RequestsServlet extends HttpServlet {
         dbUtil.setName(name);
         dbUtil.setPassword(password);
 
-        LocalDate beginDate = LocalDate.parse("2021-06-10");
-        LocalDate endDate = LocalDate.parse("2021-06-13");
+        LocalDate beginDate = LocalDate.parse(request.getParameter("beginDate"));
+        LocalDate endDate = LocalDate.parse(request.getParameter("endDate"));
 
         dbUtil.changeDate(vacationID, beginDate, endDate);
     }
