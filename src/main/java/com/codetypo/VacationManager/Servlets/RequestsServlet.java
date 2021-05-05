@@ -48,7 +48,27 @@ public class RequestsServlet extends HttpServlet {
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException {
         try {
-            listVacations(request, response);
+            String command = request.getParameter("command");
+
+            if (command == null)
+                command = "LIST";
+
+            int id;
+
+            switch(command){
+                case "LIST":
+                    listVacations(request, response);
+                    break;
+
+                case "CHANGE":
+                    id = Integer.parseInt(request.getParameter("vacationID"));
+                    changeDate(request, response, id);
+                    listVacations(request, response);
+                    break;
+
+                default:
+                    listVacations(request, response);
+            }
         } catch (Exception e) {
             throw new ServletException(e);
         }
@@ -62,7 +82,6 @@ public class RequestsServlet extends HttpServlet {
         dbUtil.setPassword(password);
         List<Vacation> vacationList = null;
 
-
         try {
 
             int empId = dbUtil.loginToDB(name, password);
@@ -75,5 +94,9 @@ public class RequestsServlet extends HttpServlet {
         RequestDispatcher dispatcher = request.getRequestDispatcher("/user_requests.jsp");
         request.setAttribute("REQUESTS_LIST", vacationList);
         dispatcher.forward(request, response);
+    }
+
+    private void changeDate(HttpServletRequest request, HttpServletResponse response, int id){
+        System.out.println("Date changed! Vacation's id: " + id);
     }
 }

@@ -43,23 +43,33 @@
 
 <br>
 
-<table class="table table-striped">
+<table class="table table-hover">
     <thead>
     <tr>
         <th scope="col">#</th>
         <th scope="col">Begin date</th>
         <th scope="col">End date</th>
         <th scope="col">approved</th>
+        <th scope="col">change date</th>
     </tr>
     </thead>
     <tbody>
     <jsp:useBean id="REQUESTS_LIST" scope="request" type="java.util.List"/>
     <c:forEach var="vacation" items="${REQUESTS_LIST}">
+
+        <c:url var="changeLink" value="RequestsServlet">
+            <c:param name="command" value="CHANGE"/>
+            <c:param name="vacationID" value="${vacation.id}"/>
+        </c:url>
+
         <tr>
             <th scope="row">${vacation.id}</th>
             <td>${vacation.beginDate}</td>
             <td>${vacation.endDate}</td>
             <td>${vacation.approved}</td>
+            <td><a href="${changeLink}">
+                <button type="button" class="btn btn-success">Change</button>
+            </a>
         </tr>
     </c:forEach>
     </tbody>
