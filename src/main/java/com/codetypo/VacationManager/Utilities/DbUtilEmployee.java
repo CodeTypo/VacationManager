@@ -78,7 +78,7 @@ public class DbUtilEmployee extends DbUtil {
         try {
             conn = dataSource.getConnection();
 
-            String sql = "SELECT * FROM employees WHERE e_employee_login = ? AND e_employee_password = ?;";
+            String sql = "SELECT * FROM employees WHERE e_employee_login = ? AND e_employee_password = ? AND e_is_admin = false;";
             statement = conn.prepareStatement(sql);
             statement.setString(1, login);
             statement.setString(2, password);
@@ -87,10 +87,7 @@ public class DbUtilEmployee extends DbUtil {
 
             while (resultSet.next()) {
                 int id = resultSet.getInt("e_id");
-                boolean isAdmin = resultSet.getBoolean("e_is_admin");
 
-                System.out.println("id: " + id);
-                System.out.println("isAdmin: " + isAdmin);
                 connected = id;
             }
 

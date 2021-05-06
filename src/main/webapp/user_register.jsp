@@ -239,37 +239,37 @@
                 </div>
                 <div class="card-body">
                     <h5 class="card-title text-center">Register</h5>
-                    <form class="form-signin">
+                    <form class="form-signin" action="RegistrationServlet" method="post">
                         <div class="form-label-group">
-                            <input type="text" id="inputUserame" class="form-control" placeholder="Username" required autofocus>
-                            <label for="inputUserame">Login</label>
+                            <input type="text" id="username" name="username" class="form-control" placeholder="Username" required autofocus>
+                            <label for="username">Login</label>
                         </div>
 
                         <div class="form-label-group">
-                            <input type="password" id="inputPassword" class="form-control" placeholder="Password" required>
-                            <label for="inputPassword">Password</label>
+                            <input type="password" id="password" name="password" class="form-control" placeholder="Password" required>
+                            <label for="password">Password</label>
                         </div>
 
                         <hr>
 
                         <div class="form-label-group">
-                            <input type="email" id="inputEmail" class="form-control" placeholder="Email address" required>
-                            <label for="inputEmail">E mail address</label>
+                            <input type="email" id="email" name="email" class="form-control" placeholder="Email address" required>
+                            <label for="email">E mail address</label>
                         </div>
 
                         <div class="form-label-group">
-                            <input type="text" id="inputFirstName" class="form-control" placeholder="First name" required>
-                            <label for="inputFirstName">First Name</label>
+                            <input type="text" id="firstName" name="firstName" class="form-control" placeholder="First name" required>
+                            <label for="firstName">First Name</label>
                         </div>
 
                         <div class="form-label-group">
-                            <input type="text" id="inputLastName" class="form-control" placeholder="Last name" required>
-                            <label for="inputLastName">Last name</label>
+                            <input type="text" id="lastName" name="lastName" class="form-control" placeholder="Last name" required>
+                            <label for="lastName">Last name</label>
                         </div>
 
                         <div class="form-label-group">
-                            <input type="date" id="inputDate" class="form-control" placeholder="Date" required>
-                            <label for="inputDate">Date of the first day of work</label>
+                            <input type="date" id="date" name="date" class="form-control" placeholder="Date" required>
+                            <label for="date">Date of the first day of work</label>
                         </div>
 
 
