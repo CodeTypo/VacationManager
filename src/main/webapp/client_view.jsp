@@ -24,7 +24,7 @@
     <div class="collapse navbar-collapse" id="navbarColor02">
         <ul class="navbar-nav mr-auto">
             <li class="nav-item">
-                <a class="nav-link" href="index.jsp">Log out
+                <a class="nav-link" href="user_login.jsp">Log out
                 </a>
             </li>
             <li class="nav-item active">
