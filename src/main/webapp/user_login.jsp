@@ -1,11 +1,14 @@
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 
 <%
-    if(request.getParameter("userLogin") != null) {
+    if(request.getParameter("adminCheck") == null && request.getParameter("userLogin") != null) {
         request.getSession().setAttribute("login", request.getParameter("userLogin"));
         request.getSession().setAttribute("password", request.getParameter("userPassword"));
-        System.out.println(request.getSession().getAttribute("login"));
         response.sendRedirect("UserServlet");
+    } else if (request.getParameter("userLogin") != null){
+        request.getSession().setAttribute("login", request.getParameter("userLogin"));
+        request.getSession().setAttribute("password", request.getParameter("userPassword"));
+        response.sendRedirect("AdminServlet");
     }
 %>
 
@@ -249,6 +252,11 @@
                                 <div class="form-label-group">
                                     <input name="userPassword" type="password" id="inputPassword" class="form-control" placeholder="Password" required>
                                     <label for="inputPassword">Password</label>
+                                </div>
+
+                                <div class="custom-control custom-checkbox mb-3">
+                                    <input name="adminCheck" type="checkbox" class="custom-control-input" id="customCheck1" value="adminCheck">
+                                    <label class="custom-control-label" for="customCheck1">I am an Admin</label>
                                 </div>
 
                                 <button class="btn btn-lg btn-primary btn-block btn-login text-uppercase font-weight-bold mb-2" type="submit">Sign in</button>
