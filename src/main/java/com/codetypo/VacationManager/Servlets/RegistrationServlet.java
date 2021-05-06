@@ -14,10 +14,13 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.sql.DataSource;
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.time.LocalDate;
+import java.time.Period;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -82,17 +85,30 @@ public class RegistrationServlet extends HttpServlet {
                     employeeID = resultSet.getInt("e_id");
                 }
 
-                String sql3 = "INSERT INTO details (d_employee_id, d_first_name, d_last_name, d_email) VALUES (?, ?, ?, ?);";
+                LocalDate userInputDate = LocalDate.parse(request.getParameter("date"));
+                int yearsBetween = Period.between(userInputDate, LocalDate.now()).getYears();
+                int availableDays;
+
+                if( yearsBetween > 10)
+                    availableDays = 26;
+                else
+                    availableDays = 20;
+
+                System.out.println(availableDays);
+
+                String sql3 = "INSERT INTO details (d_employee_id, d_first_name, d_last_name, d_email, d_available_vacation_days) VALUES (?, ?, ?, ?, ?);";
                 statement = conn.prepareStatement(sql3);
                 statement.setInt(1, employeeID);
                 statement.setString(2, request.getParameter("firstName"));
                 statement.setString(3, request.getParameter("lastName"));
                 statement.setString(4, request.getParameter("email"));
+                statement.setInt(5, availableDays);
 
                 statement.executeUpdate();
+                response.sendRedirect("user_login.jsp");
             }
 
-        } catch (SQLException throwables) {
+        } catch (SQLException | IOException throwables) {
             throwables.printStackTrace();
         }
     }

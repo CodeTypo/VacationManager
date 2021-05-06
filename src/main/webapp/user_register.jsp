@@ -4,7 +4,7 @@
 <html>
 <head>
     <meta http-equiv="content-type" content="text/html; charset=UTF-8">
-    <title>Bootstrap Registration Page with Floating Labels</title>
+    <title>Vacation Manager register</title>
     <meta http-equiv="content-type" content="text/html; charset=UTF-8">
     <meta name="robots" content="noindex, nofollow">
     <meta name="googlebot" content="noindex, nofollow">
@@ -51,7 +51,7 @@
         .card-signin .card-img-left {
             width: 45%;
             /* Link to your background image using in the property below! */
-            background: scroll center url('https://source.unsplash.com/WEQbe2jBg40/414x512');
+            background: scroll center url('images/backg.jpg');
             background-size: cover;
         }
 

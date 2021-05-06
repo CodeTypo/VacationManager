@@ -62,7 +62,6 @@ public class VacationServlet extends HttpServlet {
         } catch (SQLException throwables) {
             throwables.printStackTrace();
         }
-        RequestDispatcher dispatcher = request.getRequestDispatcher("UserServlet");
-//        dispatcher.forward(request, response);
+        response.sendRedirect("UserServlet");
     }
 }

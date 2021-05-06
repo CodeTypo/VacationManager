@@ -105,15 +105,4 @@ public class AdminServlet extends HttpServlet {
 
         }
     }
-
-    private void listEmployees(HttpServletRequest request, HttpServletResponse response) throws Exception {
-
-        List<Employee> employeeList = dbUtil.getEmployees();
-
-        request.setAttribute("EMPLOYEES_LIST", employeeList);
-
-        RequestDispatcher dispatcher = request.getRequestDispatcher("/admin_view.jsp");
-
-        dispatcher.forward(request, response);
-    }
 }

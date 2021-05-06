@@ -1,14 +1,9 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<%
-    System.out.println("test book vacation");
-    System.out.println(request.getSession().getAttribute("login"));
-%>
-
 
 <html>
 <head>
-    <title>Book a vacation</title>
+    <title>Vacation booking</title>
     <link rel="stylesheet" href="https://bootswatch.com/4/lux/bootstrap.css">
 </head>
 
@@ -42,14 +37,18 @@
 
 <br>
 <br>
-<h2>Vacation booking: </h2>
+<h2 style="margin-left: 20px;">Vacation booking: </h2>
 <br>
 
-<div class="container">
-    <form action="VacationServlet">
-        Start Date: <input id="startDate" name="startDate" type="date" width="276"/>
-        End Date: <input id="endDate" name="endDate" type="date" width="276"/>
-        <input type="submit" class="button" value="Submit">
+<div class="container align-self-center align-content-center">
+    <form class="align-content-center" style="max-width: 400px;" action="VacationServlet">
+        <label for="startDate">The first day of Your vacation: </label><br><input id="startDate" name="startDate" type="date" width="276"/>
+        <br>
+        <br>
+        <label for="endDate">The last day of Your vacation: </label><br><input id="endDate" name="endDate" type="date" width="276"/>
+        <br>
+        <br>
+        <input type="submit" class="btn btn-success" value="Submit">
     </form>
 </div>
 </body>

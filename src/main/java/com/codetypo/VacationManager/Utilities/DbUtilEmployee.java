@@ -62,9 +62,6 @@ public class DbUtilEmployee extends DbUtil {
         } finally {
             close(conn, statement, resultSet);
         }
-
-        System.out.println(vacations.size());
-
         return vacations;
     }
 
@@ -206,10 +203,15 @@ public class DbUtilEmployee extends DbUtil {
                 Date bDate = resultSet.getDate("v_begin_date");
                 Date eDate = resultSet.getDate("v_end_date");
 
-                int firstCondition = (int) ChronoUnit.DAYS.between(LocalDate.parse(bDate.toString()), beginDate);
+                //dni pomiędzy początkiem daty z bazy, a początkiem daty do zmiany
+                int firstCondition =  (int) ChronoUnit.DAYS.between(LocalDate.parse(bDate.toString()), beginDate);
+                //dni pomiędzy końcem daty z bazy, a początkiem daty do zmiany
                 int secondCondition = (int) ChronoUnit.DAYS.between(LocalDate.parse(eDate.toString()), beginDate);
-                int thirdCondition = (int) ChronoUnit.DAYS.between(LocalDate.parse(bDate.toString()), endDate);
+                //dni pomiędzy początkiem daty z bazy, a końcem daty do zmiany
+                int thirdCondition =  (int) ChronoUnit.DAYS.between(LocalDate.parse(bDate.toString()), endDate);
+                //dni pomiędzy końcem daty z bazy, a końcem daty do zmiany
                 int fourthCondition = (int) ChronoUnit.DAYS.between(LocalDate.parse(eDate.toString()), endDate);
+                //dni pomiędzy końcem daty z bazy, a początkiem daty do zmiany
                 int fifthCondition = (int) ChronoUnit.DAYS.between(LocalDate.parse(eDate.toString()), beginDate);
 
                 if((firstCondition < 0 & secondCondition < 0 & fourthCondition < 0 & thirdCondition < 0) || fifthCondition > 0) {
@@ -219,7 +221,6 @@ public class DbUtilEmployee extends DbUtil {
                 }
             }
         }
-
         return isDateOK;
     }
 

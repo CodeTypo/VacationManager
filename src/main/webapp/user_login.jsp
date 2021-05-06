@@ -18,7 +18,7 @@
 <html>
 <head>
     <meta http-equiv="content-type" content="text/html; charset=UTF-8">
-    <title>Split Screen Bootstrap 4 Sign In Page Example with Floating Form Labels</title>
+    <title>Vacation Manager login</title>
     <meta http-equiv="content-type" content="text/html; charset=UTF-8">
     <meta name="robots" content="noindex, nofollow">
     <meta name="googlebot" content="noindex, nofollow">
@@ -49,7 +49,7 @@
         }
 
         .bg-image {
-            background-image: url('https://source.unsplash.com/WEQbe2jBg40/600x1200');
+            background-image: url('images/backg.jpg');
             background-size: cover;
             background-position: center;
         }
