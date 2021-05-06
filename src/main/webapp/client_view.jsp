@@ -1,10 +1,6 @@
+<%@ page import="com.codetypo.VacationManager.Models.Vacation" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-
-<%
-    System.out.println("test client view");
-    System.out.println(request.getSession().getAttribute("login"));
-%>
 
 <html>
 <head>
@@ -44,13 +40,15 @@
 
 <jsp:useBean id="USER_DETAILS" scope="request" type="java.util.List"/>
 <c:forEach var="detail" items="${USER_DETAILS}">
-    <h1>${detail.firstName} ${detail.lastName}</h1>
+    <h1 style="margin-left: 20px;">  ${detail.firstName} ${detail.lastName}</h1>
+    <br>
+    <h2 style="margin-left: 20px;">  Vacation days left: ${detail.vacationDaysLeft}</h2>
 </c:forEach>
 
 <br>
 <br>
 
-<h2>Vacations requested by You: </h2>
+<h3 style="margin-left: 20px;">Vacations requested by You: </h3>
 
 <br>
 
@@ -66,7 +64,18 @@
     <tbody>
     <jsp:useBean id="USER_VACATIONS" scope="request" type="java.util.List"/>
     <c:forEach var="vacation" items="${USER_VACATIONS}">
-        <tr class="table-secondary">
+
+        <tr
+                <%
+                    Vacation item = (Vacation)pageContext.getAttribute("vacation");
+                    if (item.isApproved()){
+                        out.print("class =\"table-success\"");
+                    } else {
+                        out.print("class =\"table-danger\"");
+                    }
+                %>
+
+        >
             <th scope="row">${vacation.id}</th>
             <td>${vacation.beginDate}</td>
             <td>${vacation.endDate}</td>

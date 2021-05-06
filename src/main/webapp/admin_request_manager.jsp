@@ -36,7 +36,7 @@
 
 <br>
 <br>
-<h1>Vacation requests</h1>
+<h1 style="margin-left: 20px;">Vacation requests</h1>
 <br>
 
 
@@ -54,6 +54,7 @@
         <th scope="col">Approved</th>
         <th scope="col">Approve</th>
         <th scope="col">Deny</th>
+        <th scope="col">Delete</th>
     </tr>
     </thead>
     <tbody>
@@ -61,6 +62,11 @@
     <c:forEach var="tmpVacation" items="${VACATIONS_LIST}">
         <c:url var="approveLink" value="VacationRequestManagerServlet">
             <c:param name="command" value="APPROVE"/>
+            <c:param name="vacationID" value="${tmpVacation.id}"/>
+        </c:url>
+
+        <c:url var="deleteLink" value="VacationRequestManagerServlet">
+            <c:param name="command" value="DELETE"/>
             <c:param name="vacationID" value="${tmpVacation.id}"/>
         </c:url>
 
@@ -83,7 +89,10 @@
                 <button type="button" class="btn btn-success">Approve</button>
             </a>
             <td><a href="${denyLink}">
-                <button type="button" class="btn btn-danger">Deny</button>
+                <button type="button" class="btn btn-warning">Deny</button>
+            </a>
+            <td><a href="${deleteLink}">
+                <button type="button" class="btn btn-danger">Delete</button>
             </a>
         </tr>
     </c:forEach>

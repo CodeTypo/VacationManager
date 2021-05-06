@@ -82,6 +82,12 @@ public class VacationRequestManagerServlet extends HttpServlet {
                     listVacations(request, response);
                     break;
 
+                case "DELETE":
+                    id = Integer.parseInt(request.getParameter("vacationID"));
+                    deleteVacation(request,response,id);
+                    listVacations(request, response);
+                    break;
+
                 default:
                     listVacations(request, response);
             }
@@ -102,7 +108,7 @@ public class VacationRequestManagerServlet extends HttpServlet {
         dbUtil.approveVacation(id);
     }
 
-    private void denyVacation(HttpServletRequest request, HttpServletResponse response, int id) throws SQLException, ServletException, IOException {
+    private void deleteVacation(HttpServletRequest request, HttpServletResponse response, int id) throws SQLException, ServletException, IOException {
         String name = (String) request.getSession().getAttribute("login");
         String password = (String) request.getSession().getAttribute("password");
 
@@ -110,6 +116,16 @@ public class VacationRequestManagerServlet extends HttpServlet {
         dbUtil.setPassword(password);
         dbUtil.deleteVacation(id);
     }
+
+    private void denyVacation(HttpServletRequest request, HttpServletResponse response, int id) throws SQLException, ServletException, IOException {
+        String name = (String) request.getSession().getAttribute("login");
+        String password = (String) request.getSession().getAttribute("password");
+
+        dbUtil.setName(name);
+        dbUtil.setPassword(password);
+        dbUtil.denyVacation(id);
+    }
+
 
     private void listVacations(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String name = (String) request.getSession().getAttribute("login");

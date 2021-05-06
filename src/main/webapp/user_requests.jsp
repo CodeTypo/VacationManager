@@ -4,6 +4,7 @@
 <html>
 <head>
     <link rel="stylesheet" href="https://bootswatch.com/4/lux/bootstrap.css">
+    <title>My requests</title>
 </head>
 <body>
 
@@ -54,12 +55,6 @@
     <tbody>
     <jsp:useBean id="REQUESTS_LIST" scope="request" type="java.util.List"/>
     <c:forEach var="vacation" items="${REQUESTS_LIST}">
-
-        <c:url var="changeLink" value="RequestsServlet">
-            <c:param name="command" value="CHANGE"/>
-            <c:param name="vacationID" value="${vacation.id}"/>
-        </c:url>
-
         <tr>
             <th scope="row">${vacation.id}</th>
             <form action="RequestsServlet">

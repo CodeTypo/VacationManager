@@ -99,7 +99,6 @@ public class RequestsServlet extends HttpServlet {
     }
 
     private void changeDate(HttpServletRequest request, HttpServletResponse response, int vacationID) throws SQLException {
-//        System.out.println("Date changed! Vacation's id: " + id);
 
         String name = (String) request.getSession().getAttribute("login");
         String password = (String) request.getSession().getAttribute("password");

@@ -27,16 +27,13 @@
             <li class="nav-item">
                 <a class="nav-link" href="VacationRequestManagerServlet">Manage requests</a>
             </li>
-            <li class="nav-item">
-                <a class="nav-link" href="#">Browse vacations</a>
-            </li>
         </ul>
     </div>
 </nav>
 
 <br>
 <br>
-<h1>Users</h1>
+<h1 style="margin-left: 20px;">Users</h1>
 <br>
 
 <table class="table table-hover">
@@ -64,7 +61,7 @@
 
 <br>
 <br>
-<h1>Details</h1>
+<h1 style="margin-left: 20px;">Details</h1>
 <br>
 
 <table class="table table-hover">
@@ -93,7 +90,7 @@
 
 <br>
 <br>
-<h1>Vacations</h1>
+<h1 style="margin-left: 20px;">Vacations</h1>
 <br>
 
 

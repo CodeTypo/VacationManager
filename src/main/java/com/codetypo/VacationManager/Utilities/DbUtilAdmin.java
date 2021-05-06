@@ -117,43 +117,6 @@ public class DbUtilAdmin extends DbUtil {
         return vacations;
     }
 
-    public Employee getEmployee(String id) throws Exception {
-
-        Employee employee;
-
-        Connection conn = null;
-        PreparedStatement statement = null;
-        ResultSet resultSet = null;
-
-        try {
-            int adminID = Integer.parseInt(id);
-
-            conn = dataSource.getConnection();
-
-            String sql = "SELECT * FROM employees WHERE id = ?";
-
-            statement = conn.prepareStatement(sql);
-            statement.setInt(1, adminID);
-            resultSet = statement.executeQuery();
-
-            if (resultSet.next()) {
-
-                String login = resultSet.getString("e_employee_login");
-                String password = resultSet.getString("e_employee_password");
-                boolean isEmployee = resultSet.getBoolean("e_employee_role");
-
-                employee = new Employee(adminID, login, password, isEmployee);
-
-            } else {
-                throw new Exception("Could not find admin with id " + adminID);
-            }
-            return employee;
-
-        } finally {
-            close(conn, statement, resultSet);
-        }
-    }
-
     public List<DetailedVacation> getDetailedVacations() throws Exception {
         List<DetailedVacation> vacations = new ArrayList<>();
 
@@ -233,6 +196,23 @@ public class DbUtilAdmin extends DbUtil {
         return true;
     }
 
+    public boolean denyVacation(int id) throws SQLException {
+        Connection conn = null;
+        PreparedStatement statement = null;
+        ResultSet resultSet = null;
+
+        try {
+            conn = dataSource.getConnection();
+            String sql = "UPDATE vacations SET v_approved = false WHERE v_id = ?;";
+            statement = conn.prepareStatement(sql);
+            statement.setInt(1, id);
+            statement.executeUpdate();
+        } finally {
+            close(conn, statement, resultSet);
+        }
+        return true;
+    }
+
     public boolean deleteVacation(int id) throws SQLException {
         Connection conn = null;
         PreparedStatement statement = null;
@@ -252,6 +232,7 @@ public class DbUtilAdmin extends DbUtil {
         }
         return true;
     }
+
 
     private void updateDetails(int id) throws SQLException {
         Connection conn = null;
