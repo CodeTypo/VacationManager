@@ -97,7 +97,7 @@ public class AdminServlet extends HttpServlet {
                 dispatcher.forward(request, response);
 
             } else {
-                dispatcher = request.getRequestDispatcher("/index.jsp");
+                dispatcher = request.getRequestDispatcher("/user_login.jsp");
                 dispatcher.include(request, response);
             }
         } catch (Exception e) {

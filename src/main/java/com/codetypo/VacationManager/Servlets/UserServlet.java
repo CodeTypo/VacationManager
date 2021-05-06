@@ -77,7 +77,7 @@ public class UserServlet extends HttpServlet {
 
                 dispatcher = request.getRequestDispatcher("/client_view.jsp");
             } else {
-                dispatcher = request.getRequestDispatcher("/index.jsp");
+                dispatcher = request.getRequestDispatcher("/user_login.jsp");
             }
             dispatcher.forward(request, response);
 
