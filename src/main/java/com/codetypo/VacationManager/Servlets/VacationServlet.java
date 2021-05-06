@@ -13,10 +13,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.sql.DataSource;
 import java.io.IOException;
-import java.sql.Date;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
+import java.time.LocalDate;
 
 @WebServlet("/VacationServlet")
 public class VacationServlet extends HttpServlet {
@@ -54,26 +52,13 @@ public class VacationServlet extends HttpServlet {
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
-        String startString = request.getParameter("startDate");
-        String endString = request.getParameter("endDate");
-
-        String [] elementsStart = startString.split("/");
-        String [] elementsEnd = endString.split("/");
-        String startYear = elementsStart[2];
-        String startMonth = elementsStart[0];
-        String startDay = elementsStart[1];
-        String endYear = elementsEnd[2];
-        String endMonth = elementsEnd[0];
-        String endDay = elementsEnd[1];
-        startString = startYear + startMonth + startDay;
-        endString = endYear + endMonth + endDay;
-        int start = Integer.parseInt(startString);
-        int end = Integer.parseInt(endString);
+        LocalDate startDate = LocalDate.parse(request.getParameter("startDate"));
+        LocalDate endDate = LocalDate.parse(request.getParameter("endDate"));
 
         int id = (int) request.getSession().getAttribute("employeeId");
 
         try {
-            dbUtil.setVacation(start,end,id);
+            dbUtil.setVacation(startDate,endDate,id);
         } catch (SQLException throwables) {
             throwables.printStackTrace();
         }
