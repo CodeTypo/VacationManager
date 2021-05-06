@@ -132,18 +132,12 @@ public class DbUtilEmployee extends DbUtil {
         return details;
     }
 
-    public boolean setVacation(int start, int end, int employeeId) throws SQLException {
+    public boolean setVacation(LocalDate beginDate, LocalDate endDate, int employeeId) throws SQLException {
 
-        String startDay = String.valueOf(start);
-        String endDay = String.valueOf(end);
+        int vacationDays = (int) ChronoUnit.DAYS.between(beginDate, endDate) + 1;
 
-        LocalDate bDate = LocalDate.parse(startDay.substring(0, 4) + "-" + startDay.substring(4, 6) + "-" + startDay.substring(6, 8));
-        LocalDate eDate = LocalDate.parse(endDay.substring(0, 4) + "-" + endDay.substring(4, 6) + "-" + endDay.substring(6, 8));
-
-        int vacationDays = (int) ChronoUnit.DAYS.between(bDate, eDate) + 1;
-
-        if (isDateOK(employeeId, bDate, eDate)) {
-            updateVacationsAndDetails(employeeId, vacationDays, start, end);
+        if (isDateOK(employeeId, beginDate, endDate)) {
+            updateVacationsAndDetails(employeeId, vacationDays, beginDate, endDate);
         } else {
             System.out.println("You cannot have a vacation in these days!");
         }
@@ -252,7 +246,7 @@ public class DbUtilEmployee extends DbUtil {
         return vacationDays;
     }
 
-    private void updateVacationsAndDetails(int employeeId, int vacationDays, int firstDay, int lastDay) throws SQLException {
+    private void updateVacationsAndDetails(int employeeId, int vacationDays, LocalDate firstDay, LocalDate lastDay) throws SQLException {
         Connection conn = dataSource.getConnection();
         PreparedStatement statement;
 
@@ -266,8 +260,8 @@ public class DbUtilEmployee extends DbUtil {
         String sql4 = "INSERT INTO vacations (v_employee_id,v_begin_date,v_end_date,v_approved) VALUES (?,?,?,false);;";
         statement = conn.prepareStatement(sql4);
         statement.setInt(1, employeeId);
-        statement.setInt(2, firstDay);
-        statement.setInt(3, lastDay);
+        statement.setDate(2, Date.valueOf(firstDay));
+        statement.setDate(3, Date.valueOf(lastDay));
 
         statement.executeUpdate();
     }
