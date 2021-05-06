@@ -199,6 +199,10 @@ public class DbUtilEmployee extends DbUtil {
 
             resultSet = statement.executeQuery();
 
+            if(!resultSet.next() && vacationDays > 0){
+                return true;
+            }
+
             while (resultSet.next()) {
                 Date bDate = resultSet.getDate("v_begin_date");
                 Date eDate = resultSet.getDate("v_end_date");
