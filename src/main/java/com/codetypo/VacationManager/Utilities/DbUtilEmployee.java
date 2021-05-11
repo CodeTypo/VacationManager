@@ -12,23 +12,56 @@ import java.util.List;
 
 public class DbUtilEmployee extends DbUtil {
 
+    /**
+     * This private field represents <code>DataSource</code> class.
+     */
     private DataSource dataSource;
+
+    /**
+     * This private field represents name of employee.
+     */
     private String name;
+
+    /**
+     * This class represents password of employee.
+     */
     private String password;
 
+    /**
+     * This is a constructor with one parameter.
+     *
+     * @param dataSource represents <code>DataSource</code> class.
+     */
     public DbUtilEmployee(DataSource dataSource) {
         this.dataSource = dataSource;
     }
 
+    /**
+     * This is a setter of name.
+     *
+     * @param name represents name of employee.
+     */
     public void setName(String name) {
         this.name = name;
     }
 
+    /**
+     * This is a setter of password.
+     *
+     * @param password represents password of employee.
+     */
     public void setPassword(String password) {
         this.password = password;
     }
 
-    public List<Vacation> getVacations(int empId) throws Exception {
+    /**
+     * This method returns a list of vacations, that employee taken or wants to take.
+     *
+     * @param empId represents id of employee.
+     * @return a list of vacations.
+     * @throws SQLException when has a trouble executing SQL requests.
+     */
+    public List<Vacation> getVacations(int empId) throws SQLException {
 
         List<Vacation> vacations = new ArrayList<>();
         Connection conn = null;
@@ -65,6 +98,14 @@ public class DbUtilEmployee extends DbUtil {
         return vacations;
     }
 
+    /**
+     * This method is used to log in by employee.
+     *
+     * @param login    represents login of employee.
+     * @param password represents password of employee.
+     * @return value that informs whether the employee has logged in successfully.
+     * @throws SQLException when has a trouble executing SQL requests.
+     */
     public int loginToDB(String login, String password) throws SQLException {
 
         int connected = -1;
@@ -94,6 +135,13 @@ public class DbUtilEmployee extends DbUtil {
         return connected;
     }
 
+    /**
+     * This method returns detail.
+     *
+     * @param empId represents id of employee.
+     * @return details.
+     * @throws SQLException when has a trouble executing SQL requests.
+     */
     public Details getEmployeeDetails(int empId) throws SQLException {
 
         Connection conn = null;
@@ -126,6 +174,15 @@ public class DbUtilEmployee extends DbUtil {
         return details;
     }
 
+    /**
+     * This method sets vacation that the employee wants to take.
+     *
+     * @param beginDate  represents begin date of vacations.
+     * @param endDate    represents end date of vacations.
+     * @param employeeId represents id of employee.
+     * @return always true.
+     * @throws SQLException when has a trouble executing SQL requests.
+     */
     public boolean setVacation(LocalDate beginDate, LocalDate endDate, int employeeId) throws SQLException {
 
         int vacationDays = (int) ChronoUnit.DAYS.between(beginDate, endDate) + 1;
@@ -139,6 +196,14 @@ public class DbUtilEmployee extends DbUtil {
         return true;
     }
 
+    /**
+     * This method changes dates of vacation.
+     *
+     * @param vacationID represents id of vacation.
+     * @param beginDate  represents begin date of vacation, that the employee want to have after change.
+     * @param endDate    represents end date of vacation, that the employee want to have after change.
+     * @throws SQLException when has a trouble executing SQL requests.
+     */
     public void changeDate(int vacationID, LocalDate beginDate, LocalDate endDate) throws SQLException {
 
         Connection conn = dataSource.getConnection();
@@ -182,6 +247,14 @@ public class DbUtilEmployee extends DbUtil {
         }
     }
 
+    /**
+     * This method checks date that the user wants to set.
+     *
+     * @param employeeID represents id of employee.
+     * @param beginDate  represents begin date of vacation, that the employee want to have after change.
+     * @param endDate    represents end date of vacation, that the employee want to have after change.
+     * @throws SQLException when has a trouble executing SQL requests.
+     */
     private boolean isDateOK(int employeeID, LocalDate beginDate, LocalDate endDate) throws SQLException {
 
         Connection conn = dataSource.getConnection();
@@ -199,26 +272,19 @@ public class DbUtilEmployee extends DbUtil {
 
             resultSet = statement.executeQuery();
 
-            if(!resultSet.next() && vacationDays > 0){
-                return true;
-            }
-
             while (resultSet.next()) {
                 Date bDate = resultSet.getDate("v_begin_date");
                 Date eDate = resultSet.getDate("v_end_date");
 
-                //dni pomiędzy początkiem daty z bazy, a początkiem daty do zmiany
-                int firstCondition =  (int) ChronoUnit.DAYS.between(LocalDate.parse(bDate.toString()), beginDate);
-                //dni pomiędzy końcem daty z bazy, a początkiem daty do zmiany
+                int firstCondition = (int) ChronoUnit.DAYS.between(LocalDate.parse(bDate.toString()), beginDate);
                 int secondCondition = (int) ChronoUnit.DAYS.between(LocalDate.parse(eDate.toString()), beginDate);
-                //dni pomiędzy początkiem daty z bazy, a końcem daty do zmiany
-                int thirdCondition =  (int) ChronoUnit.DAYS.between(LocalDate.parse(bDate.toString()), endDate);
-                //dni pomiędzy końcem daty z bazy, a końcem daty do zmiany
+                int thirdCondition = (int) ChronoUnit.DAYS.between(LocalDate.parse(bDate.toString()), endDate);
                 int fourthCondition = (int) ChronoUnit.DAYS.between(LocalDate.parse(eDate.toString()), endDate);
-                //dni pomiędzy końcem daty z bazy, a początkiem daty do zmiany
-                int fifthCondition = (int) ChronoUnit.DAYS.between(LocalDate.parse(eDate.toString()), beginDate);
+                int fifthCondition = (int) ChronoUnit.DAYS.between(beginDate, endDate);
 
-                if((firstCondition < 0 & secondCondition < 0 & fourthCondition < 0 & thirdCondition < 0) || fifthCondition > 0) {
+                if (fifthCondition >= 0 && ((firstCondition < 0 & secondCondition < 0 & fourthCondition < 0 & thirdCondition < 0) ||
+                        (secondCondition > 0 & secondCondition > 0 & fourthCondition > 0 & thirdCondition > 0) ||
+                        (firstCondition == 0 & fourthCondition != 0) || fourthCondition == 0 & firstCondition != 0)) {
                     isDateOK = true;
                 } else {
                     return false;
@@ -228,6 +294,13 @@ public class DbUtilEmployee extends DbUtil {
         return isDateOK;
     }
 
+    /**
+     * This method calculates vacation days, that the employee can take .
+     *
+     * @param employeeID represents id of employee.
+     * @return vacation days.
+     * @throws SQLException when has a trouble executing SQL requests.
+     */
     private int availableVacationDays(int employeeID) throws SQLException {
         Connection conn = dataSource.getConnection();
         PreparedStatement statement;
@@ -248,6 +321,15 @@ public class DbUtilEmployee extends DbUtil {
         return vacationDays;
     }
 
+    /**
+     * This method updates vacation detail.
+     *
+     * @param employeeId   represents id of employee.
+     * @param vacationDays represents vacation days.
+     * @param firstDay     represents first day of vacation.
+     * @param lastDay      represents last day of vacation.
+     * @throws SQLException when has a trouble executing SQL requests.
+     */
     private void updateVacationsAndDetails(int employeeId, int vacationDays, LocalDate firstDay, LocalDate lastDay) throws SQLException {
         Connection conn = dataSource.getConnection();
         PreparedStatement statement;

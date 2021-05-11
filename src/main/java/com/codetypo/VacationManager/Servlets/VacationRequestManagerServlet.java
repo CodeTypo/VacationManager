@@ -1,16 +1,12 @@
 package com.codetypo.VacationManager.Servlets;
 
 import com.codetypo.VacationManager.Models.DetailedVacation;
-import com.codetypo.VacationManager.Models.Details;
-import com.codetypo.VacationManager.Models.Employee;
 import com.codetypo.VacationManager.Utilities.DbUtilAdmin;
-import com.codetypo.VacationManager.Utilities.DbUtilEmployee;
 
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.servlet.RequestDispatcher;
-import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -18,24 +14,34 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.sql.DataSource;
 import java.io.IOException;
-import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.List;
 
+/**
+ * This class represents the admin functionality of approving,
+ * denying and deleting vacations taken by the employee.
+ */
 @WebServlet("/VacationRequestManagerServlet")
 public class VacationRequestManagerServlet extends HttpServlet {
 
+    /**
+     * This private field represents <code>DbUtilAdmin</code> class.
+     */
     private DbUtilAdmin dbUtil;
-    private DataSource dataSource;
-    private final String db_url = "jdbc:mysql://localhost:3306/vacationmanager?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=CET";
 
+    /**
+     * This private field represents <code>DataSource</code> class.
+     */
+    private DataSource dataSource;
+
+    /**
+     * This is no arguments constructor.
+     */
     public VacationRequestManagerServlet() {
         Context initCtx;
         try {
             initCtx = new InitialContext();
             Context envCtx = (Context) initCtx.lookup("java:comp/env");
-            // Look up our data source
             dataSource = (DataSource)
                     envCtx.lookup("jdbc/vacationmanager");
         } catch (NamingException e) {
@@ -43,7 +49,9 @@ public class VacationRequestManagerServlet extends HttpServlet {
         }
     }
 
-
+    /**
+     * This is an override methods, that initializes <code>DbUtilAdmin</code> class.
+     */
     @Override
     public void init() throws ServletException {
         super.init();
@@ -54,11 +62,17 @@ public class VacationRequestManagerServlet extends HttpServlet {
         }
     }
 
-    protected void doPost(HttpServletRequest request, HttpServletResponse response) {
-    }
-
+    /**
+     * This method is called, whenever admin wants to approve, deny or delete a vacations
+     * taken by employees.
+     *
+     * @param request  represents <code>HttpServletRequest</code> class.
+     * @param response represents <code>HttpServletResponse</code> class.
+     */
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException {
+
         response.setContentType("text/html");
+
         try {
             String command = request.getParameter("command");
             if (command == null)
@@ -72,19 +86,19 @@ public class VacationRequestManagerServlet extends HttpServlet {
 
                 case "APPROVE":
                     id = Integer.parseInt(request.getParameter("vacationID"));
-                    approveVacation(request,response,id);
+                    approveVacation(request, response, id);
                     listVacations(request, response);
                     break;
 
                 case "DENY":
                     id = Integer.parseInt(request.getParameter("vacationID"));
-                    denyVacation(request,response,id);
+                    denyVacation(request, id);
                     listVacations(request, response);
                     break;
 
                 case "DELETE":
                     id = Integer.parseInt(request.getParameter("vacationID"));
-                    deleteVacation(request,response,id);
+                    deleteVacation(request, response, id);
                     listVacations(request, response);
                     break;
 
@@ -95,11 +109,17 @@ public class VacationRequestManagerServlet extends HttpServlet {
         } catch (Exception e) {
             throw new ServletException(e);
         }
-
-
     }
 
-    private void approveVacation(HttpServletRequest request, HttpServletResponse response, int id) throws SQLException, ServletException, IOException {
+    /**
+     * This method is called when admin wants to approve a vacation taken by the employee.
+     *
+     * @param request  represents <code>HttpServletRequest</code> class.
+     * @param response represents <code>HttpServletResponse</code> class.
+     * @param id       represents id of vacation.
+     * @throws SQLException when <code>DbUtilAdmin</code> has a trouble executing SQL requests.
+     */
+    private void approveVacation(HttpServletRequest request, HttpServletResponse response, int id) throws SQLException {
         String name = (String) request.getSession().getAttribute("login");
         String password = (String) request.getSession().getAttribute("password");
         dbUtil.setName(name);
@@ -108,7 +128,15 @@ public class VacationRequestManagerServlet extends HttpServlet {
         dbUtil.approveVacation(id);
     }
 
-    private void deleteVacation(HttpServletRequest request, HttpServletResponse response, int id) throws SQLException, ServletException, IOException {
+    /**
+     * This method is called when admin wants to delete a vacation taken by the employee.
+     *
+     * @param request  represents <code>HttpServletRequest</code> class.
+     * @param response represents <code>HttpServletResponse</code> class.
+     * @param id       represents id of vacation.
+     * @throws SQLException when <code>DbUtilAdmin</code> has a trouble executing SQL requests.
+     */
+    private void deleteVacation(HttpServletRequest request, HttpServletResponse response, int id) throws SQLException {
         String name = (String) request.getSession().getAttribute("login");
         String password = (String) request.getSession().getAttribute("password");
 
@@ -117,7 +145,14 @@ public class VacationRequestManagerServlet extends HttpServlet {
         dbUtil.deleteVacation(id);
     }
 
-    private void denyVacation(HttpServletRequest request, HttpServletResponse response, int id) throws SQLException, ServletException, IOException {
+    /**
+     * This method is called when admin wants to deny a vacation taken by the employee.
+     *
+     * @param request represents <code>HttpServletRequest</code> class.
+     * @param id      represents id of vacation.
+     * @throws SQLException when <code>DbUtilAdmin</code> has a trouble executing SQL requests.
+     */
+    private void denyVacation(HttpServletRequest request/*, HttpServletResponse response*/, int id) throws SQLException {
         String name = (String) request.getSession().getAttribute("login");
         String password = (String) request.getSession().getAttribute("password");
 
@@ -126,14 +161,22 @@ public class VacationRequestManagerServlet extends HttpServlet {
         dbUtil.denyVacation(id);
     }
 
-
+    /**
+     * This method is always called after an approval, rejection,
+     * or deletion of vacations taken by the employee is performed.
+     *
+     * @param request  represents <code>HttpServletRequest</code> class.
+     * @param response represents <code>HttpServletResponse</code> class.
+     * @throws SQLException when <code>DbUtilAdmin</code> has a trouble executing SQL requests.
+     * @throws IOException  when an input or output exception is thrown.
+     */
     private void listVacations(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String name = (String) request.getSession().getAttribute("login");
         String password = (String) request.getSession().getAttribute("password");
 
         dbUtil.setName(name);
         dbUtil.setPassword(password);
-        List<DetailedVacation> vacationList= null;
+        List<DetailedVacation> vacationList = null;
         RequestDispatcher dispatcher = request.getRequestDispatcher("/admin_request_manager.jsp");
 
 
@@ -145,23 +188,5 @@ public class VacationRequestManagerServlet extends HttpServlet {
 
         request.setAttribute("VACATIONS_LIST", vacationList);
         dispatcher.forward(request, response);
-    }
-
-
-    private boolean validate(String name, String pass) {
-        boolean status = false;
-        try {
-            Class.forName("com.mysql.cj.jdbc.Driver");
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-        }
-        Connection conn = null;
-        try {
-            conn = DriverManager.getConnection(db_url, name, pass);
-            status = true;
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return status;
     }
 }
