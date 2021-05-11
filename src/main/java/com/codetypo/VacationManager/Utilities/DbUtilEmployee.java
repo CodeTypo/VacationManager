@@ -10,6 +10,9 @@ import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * This class represents DbUtil for employee.
+ */
 public class DbUtilEmployee extends DbUtil {
 
     /**
@@ -272,7 +275,11 @@ public class DbUtilEmployee extends DbUtil {
 
             resultSet = statement.executeQuery();
 
-            while (resultSet.next()) {
+            if (!resultSet.next() && vacationDays <= 20) {
+                return true;
+            }
+
+            do {
                 Date bDate = resultSet.getDate("v_begin_date");
                 Date eDate = resultSet.getDate("v_end_date");
 
@@ -289,7 +296,7 @@ public class DbUtilEmployee extends DbUtil {
                 } else {
                     return false;
                 }
-            }
+            } while (resultSet.next());
         }
         return isDateOK;
     }

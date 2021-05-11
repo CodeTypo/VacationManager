@@ -63,7 +63,13 @@ public class RegistrationServlet extends HttpServlet {
         }
     }
 
-    protected void doGet(HttpServletRequest request, HttpServletResponse response) {
+    /**
+     * This method adds employee to database.
+     *
+     * @param request  represents <code>HttpServletRequest</code> class.
+     * @param response represents <code>HttpServletResponse</code> class.
+     */
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) {
         Connection conn;
         PreparedStatement statement;
         ResultSet resultSet;
