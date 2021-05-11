@@ -3,7 +3,6 @@ package com.codetypo.VacationManager.Utilities;
 import com.codetypo.VacationManager.Models.DetailedVacation;
 import com.codetypo.VacationManager.Models.Details;
 import com.codetypo.VacationManager.Models.Employee;
-import com.codetypo.VacationManager.Models.Vacation;
 
 import javax.sql.DataSource;
 import java.sql.*;
@@ -12,24 +11,49 @@ import java.time.Period;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * This class represents DbUtil for admin.
+ */
 public class DbUtilAdmin extends DbUtil {
 
-    private String name;
-    private String password;
+    /**
+     * This is private field represents <code>DataSource</code> class.
+     */
     private DataSource dataSource;
 
+    /**
+     * This is all arguments constructor.
+     *
+     * @param dataSource represents <code>DataSource</code> class.
+     */
     public DbUtilAdmin(DataSource dataSource) {
         this.dataSource = dataSource;
     }
 
+    /**
+     * This is a setter of name.
+     *
+     * @param name represents name.
+     */
     public void setName(String name) {
-        this.name = name;
     }
 
+    /**
+     * This is a setter of password.
+     *
+     * @param password represents password.
+     */
     public void setPassword(String password) {
-        this.password = password;
     }
 
+    /**
+     * This method is used to log in by admin.
+     *
+     * @param login    represents login of admin.
+     * @param password represents password of admin.
+     * @return value that informs whether the administrator has logged in successfully.
+     * @throws SQLException when has a trouble executing SQL requests.
+     */
     public int loginToDB(String login, String password) throws SQLException {
 
         int connected = -1;
@@ -58,8 +82,13 @@ public class DbUtilAdmin extends DbUtil {
         return connected;
     }
 
-
-    public List<Employee> getEmployees() throws Exception {
+    /**
+     * This method returns a list of employees.
+     *
+     * @return a list of employees.
+     * @throws SQLException when has a trouble executing SQL requests.
+     */
+    public List<Employee> getEmployees() throws SQLException {
 
         List<Employee> employees = new ArrayList<>();
 
@@ -90,34 +119,13 @@ public class DbUtilAdmin extends DbUtil {
         return employees;
     }
 
-    public List<Vacation> getVacations() throws Exception {
-        List<Vacation> vacations = new ArrayList<>();
-
-        Connection conn = null;
-        Statement statement = null;
-        ResultSet resultSet = null;
-
-        try {
-            conn = dataSource.getConnection();
-            String sql = "SELECT * FROM vacations";
-            statement = conn.createStatement();
-            resultSet = statement.executeQuery(sql);
-
-            while (resultSet.next()) {
-                int id = resultSet.getInt("v_id");
-                Date beginDate = resultSet.getDate("v_begin_date");
-                Date endDate = resultSet.getDate("v_end_date");
-                boolean approved = resultSet.getBoolean("v_approved");
-                vacations.add(new Vacation(id, beginDate, endDate, approved));
-            }
-
-        } finally {
-            close(conn, statement, resultSet);
-        }
-        return vacations;
-    }
-
-    public List<DetailedVacation> getDetailedVacations() throws Exception {
+    /**
+     * This method returns a list of vacations.
+     *
+     * @return a list of vacations.
+     * @throws SQLException when has a trouble executing SQL requests.
+     */
+    public List<DetailedVacation> getDetailedVacations() throws SQLException {
         List<DetailedVacation> vacations = new ArrayList<>();
 
         Connection conn = null;
@@ -150,6 +158,12 @@ public class DbUtilAdmin extends DbUtil {
         return vacations;
     }
 
+    /**
+     * This method returns a list of details about employee.
+     *
+     * @return a list of details about employee.
+     * @throws SQLException when has a trouble executing SQL requests.
+     */
     public List<Details> getEmployeeDetails() throws SQLException {
         List<Details> details = new ArrayList<>();
 
@@ -179,6 +193,13 @@ public class DbUtilAdmin extends DbUtil {
         return details;
     }
 
+    /**
+     * This method approves vacation that employee wanted.
+     *
+     * @param id represents an id of vacation taken by employee.
+     * @return always true.
+     * @throws SQLException when has a trouble executing SQL requests.
+     */
     public boolean approveVacation(int id) throws SQLException {
         Connection conn = null;
         PreparedStatement statement = null;
@@ -196,6 +217,13 @@ public class DbUtilAdmin extends DbUtil {
         return true;
     }
 
+    /**
+     * This method denies vacation that employee wanted.
+     *
+     * @param id represents an id of vacation taken by employee.
+     * @return always true.
+     * @throws SQLException when has a trouble executing SQL requests.
+     */
     public boolean denyVacation(int id) throws SQLException {
         Connection conn = null;
         PreparedStatement statement = null;
@@ -213,13 +241,19 @@ public class DbUtilAdmin extends DbUtil {
         return true;
     }
 
+    /**
+     * This method deletes vacation that employee wanted.
+     *
+     * @param id represents an id of vacation taken by employee.
+     * @return always true.
+     * @throws SQLException when has a trouble executing SQL requests.
+     */
     public boolean deleteVacation(int id) throws SQLException {
         Connection conn = null;
         PreparedStatement statement = null;
         ResultSet resultSet = null;
 
         try {
-
             updateDetails(id);
 
             conn = dataSource.getConnection();
@@ -233,7 +267,12 @@ public class DbUtilAdmin extends DbUtil {
         return true;
     }
 
-
+    /**
+     * This method updates details.
+     *
+     * @param id represents id of vacation taken by employee.
+     * @throws SQLException when has a trouble executing SQL requests.
+     */
     private void updateDetails(int id) throws SQLException {
         Connection conn = null;
         PreparedStatement statement = null;

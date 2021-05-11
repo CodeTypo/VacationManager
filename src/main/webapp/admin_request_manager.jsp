@@ -27,9 +27,6 @@
             <li class="nav-item active">
                 <a class="nav-link" href="#">Manage requests</a>
             </li>
-            <li class="nav-item">
-                <a class="nav-link" href="#">Browse vacations</a>
-            </li>
         </ul>
     </div>
 </nav>

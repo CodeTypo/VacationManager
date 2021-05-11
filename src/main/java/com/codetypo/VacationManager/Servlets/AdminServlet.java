@@ -18,16 +18,29 @@ import javax.servlet.http.HttpServletResponse;
 import javax.sql.DataSource;
 import java.util.List;
 
+/**
+ * This class represents a servlet for admins.
+ */
 @WebServlet("/AdminServlet")
 public class AdminServlet extends HttpServlet {
 
-    private DataSource dataSource;
+    /**
+     * This private field represents <code>DbUtilAdmin</code> class.
+     */
     private DbUtilAdmin dbUtil;
 
+    /**
+     * This private field represents <code>DataSource</code> class.
+     */
+    private DataSource dataSource;
+
+    /**
+     * This is no argument constructor.
+     */
     public AdminServlet() {
 
         Context initCtx;
-        
+
         try {
             initCtx = new InitialContext();
             Context envCtx = (Context) initCtx.lookup("java:comp/env");
@@ -38,6 +51,9 @@ public class AdminServlet extends HttpServlet {
         }
     }
 
+    /**
+     * This is an override methods, that initializes <code>DbUtilAdmin</code> class.
+     */
     @Override
     public void init(ServletConfig config) throws ServletException {
         super.init();
@@ -48,9 +64,12 @@ public class AdminServlet extends HttpServlet {
         }
     }
 
-    protected void doPost(HttpServletRequest request, HttpServletResponse response) {
-    }
-
+    /**
+     * This method is called when the admin wants to log in.
+     *
+     * @param request  represents <code>HttpServletRequest</code> class.
+     * @param response represents <code>HttpServletResponse</code> class.
+     */
     protected void doGet(HttpServletRequest request, HttpServletResponse response) {
 
         response.setContentType("text/html");

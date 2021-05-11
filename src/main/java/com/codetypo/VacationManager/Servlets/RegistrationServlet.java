@@ -1,13 +1,10 @@
 package com.codetypo.VacationManager.Servlets;
 
-import com.codetypo.VacationManager.Models.Details;
-import com.codetypo.VacationManager.Models.Vacation;
 import com.codetypo.VacationManager.Utilities.DbUtilEmployee;
 
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
-import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -21,22 +18,31 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.Period;
-import java.util.ArrayList;
-import java.util.List;
 
+/**
+ * This class represents a servlet for registration.
+ */
 @WebServlet("/RegistrationServlet")
 public class RegistrationServlet extends HttpServlet {
 
-    private DataSource dataSource;
+    /**
+     * This private field represents <code>DbUtilEmployee</code> class.
+     */
     private DbUtilEmployee dbUtil;
 
+    /**
+     * This private field represents <code>DataSource</code> class.
+     */
+    private DataSource dataSource;
+
+    /**
+     * This is no argument constructor.
+     */
     public RegistrationServlet() {
-        // Obtain our environment naming context
         Context initCtx;
         try {
             initCtx = new InitialContext();
             Context envCtx = (Context) initCtx.lookup("java:comp/env");
-            // Look up our data source
             dataSource = (DataSource)
                     envCtx.lookup("jdbc/vacationmanager");
         } catch (NamingException e) {
@@ -44,6 +50,9 @@ public class RegistrationServlet extends HttpServlet {
         }
     }
 
+    /**
+     * This is an override methods, that initializes <code>DbUtilEmployee</code> class.
+     */
     @Override
     public void init() throws ServletException {
         super.init();
@@ -54,12 +63,10 @@ public class RegistrationServlet extends HttpServlet {
         }
     }
 
-    protected void doPost(HttpServletRequest request, HttpServletResponse response) {
-        RequestDispatcher dispatcher;
-
-        Connection conn = null;
-        PreparedStatement statement = null;
-        ResultSet resultSet = null;
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) {
+        Connection conn;
+        PreparedStatement statement;
+        ResultSet resultSet;
 
         try {
             conn = dataSource.getConnection();
@@ -81,7 +88,7 @@ public class RegistrationServlet extends HttpServlet {
 
                 int employeeID = -1;
 
-                while(resultSet.next()){
+                while (resultSet.next()) {
                     employeeID = resultSet.getInt("e_id");
                 }
 
@@ -89,12 +96,10 @@ public class RegistrationServlet extends HttpServlet {
                 int yearsBetween = Period.between(userInputDate, LocalDate.now()).getYears();
                 int availableDays;
 
-                if( yearsBetween > 10)
+                if (yearsBetween > 10)
                     availableDays = 26;
                 else
                     availableDays = 20;
-
-                System.out.println(availableDays);
 
                 String sql3 = "INSERT INTO details (d_employee_id, d_first_name, d_last_name, d_email, d_available_vacation_days) VALUES (?, ?, ?, ?, ?);";
                 statement = conn.prepareStatement(sql3);
@@ -111,8 +116,5 @@ public class RegistrationServlet extends HttpServlet {
         } catch (SQLException | IOException throwables) {
             throwables.printStackTrace();
         }
-    }
-
-    protected void doGet(HttpServletRequest request, HttpServletResponse response) {
     }
 }

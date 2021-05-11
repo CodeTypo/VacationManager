@@ -18,19 +18,30 @@ import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.List;
 
+/**
+ * This class represents a servlet for employee requests.
+ */
 @WebServlet("/RequestsServlet")
 public class RequestsServlet extends HttpServlet {
 
-    private DataSource dataSource;
+    /**
+     * This private field represents <code>DbUtilEmployee</code> class.
+     */
     private DbUtilEmployee dbUtil;
 
+    /**
+     * This private field represents <code>DataSource</code> class.
+     */
+    private DataSource dataSource;
+
+    /**
+     * This is no argument constructor.
+     */
     public RequestsServlet() {
-        // Obtain our environment naming context
         Context initCtx;
         try {
             initCtx = new InitialContext();
             Context envCtx = (Context) initCtx.lookup("java:comp/env");
-            // Look up our data source
             dataSource = (DataSource)
                     envCtx.lookup("jdbc/vacationmanager");
         } catch (NamingException e) {
@@ -38,6 +49,9 @@ public class RequestsServlet extends HttpServlet {
         }
     }
 
+    /**
+     * This is an override methods, that initializes <code>DbUtilEmployee</code> class.
+     */
     @Override
     public void init() throws ServletException {
         super.init();
@@ -48,7 +62,14 @@ public class RequestsServlet extends HttpServlet {
         }
     }
 
+    /**
+     * This method is called when employee wants to change a date of vacations.
+     *
+     * @param request  represents <code>HttpServletRequest</code> class.
+     * @param response represents <code>HttpServletResponse</code> class.
+     */
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException {
+
         try {
             String command = request.getParameter("command");
 
@@ -57,14 +78,14 @@ public class RequestsServlet extends HttpServlet {
 
             int id;
 
-            switch(command){
+            switch (command) {
                 case "LIST":
                     listVacations(request, response);
                     break;
 
                 case "CHANGE":
                     id = Integer.parseInt(request.getParameter("vacationID"));
-                    changeDate(request, response, id);
+                    changeDate(request, id);
                     listVacations(request, response);
                     break;
 
@@ -76,6 +97,13 @@ public class RequestsServlet extends HttpServlet {
         }
     }
 
+    /**
+     * This method is always called after change a date of vacations taken by the employee is performed.
+     *
+     * @param request  represents <code>HttpServletRequest</code> class.
+     * @param response represents <code>HttpServletResponse</code> class.
+     * @throws IOException when an input or output exception is thrown.
+     */
     private void listVacations(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String name = (String) request.getSession().getAttribute("login");
         String password = (String) request.getSession().getAttribute("password");
@@ -98,7 +126,14 @@ public class RequestsServlet extends HttpServlet {
         dispatcher.forward(request, response);
     }
 
-    private void changeDate(HttpServletRequest request, HttpServletResponse response, int vacationID) throws SQLException {
+    /**
+     * This method is called when employee wants to change date of vacations.
+     *
+     * @param request    represents <code>HttpServletRequest</code> class.
+     * @param vacationID represents id of vacation.
+     * @throws SQLException when <code>DbUtilAdmin</code> has a trouble executing SQL requests.
+     */
+    private void changeDate(HttpServletRequest request, int vacationID) throws SQLException {
 
         String name = (String) request.getSession().getAttribute("login");
         String password = (String) request.getSession().getAttribute("password");
