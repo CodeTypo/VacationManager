@@ -152,7 +152,7 @@ public class VacationRequestManagerServlet extends HttpServlet {
      * @param id      represents id of vacation.
      * @throws SQLException when <code>DbUtilAdmin</code> has a trouble executing SQL requests.
      */
-    private void denyVacation(HttpServletRequest request/*, HttpServletResponse response*/, int id) throws SQLException {
+    private void denyVacation(HttpServletRequest request, int id) throws SQLException {
         String name = (String) request.getSession().getAttribute("login");
         String password = (String) request.getSession().getAttribute("password");
 
