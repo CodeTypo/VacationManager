@@ -63,7 +63,7 @@ public class RegistrationServlet extends HttpServlet {
         }
     }
 
-    protected void doGet(HttpServletRequest request, HttpServletResponse response) {
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) {
         Connection conn;
         PreparedStatement statement;
         ResultSet resultSet;
