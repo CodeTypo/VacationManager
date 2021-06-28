@@ -1,6 +1,6 @@
 # VacationManager
 
-A simple Java Enterprise Edition app utilising Tomcat servlets to deliver a suitable system
+A simple Java Enterprise Edition app utilising Tomcat servlets and a connected MYSQL database to deliver a suitable system
 for employee vacation management.
 
 # Login screen
